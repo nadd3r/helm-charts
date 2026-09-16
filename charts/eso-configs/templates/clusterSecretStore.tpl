@@ -1,4 +1,4 @@
-{{- if .Values.secretStore }}
+{{- if .Values.clusterSecretStore }}
 apiVersion: external-secrets.io/v1
 kind: ClusterSecretStore
 metadata:
