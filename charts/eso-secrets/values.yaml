@@ -1,25 +1,40 @@
-secretStore:
-  name: vault-backend
-  spec:
-    provider:
-      vault:
-        server: "http://my.vault.server:8200"
-        path: "secret"
-        version: "v2"
-        auth:
-          tokenSecretRef:
-            name: "vault-token"
-            key: "token"
+secretStore: {}
+  # name: vault-backend
+  # spec:
+  #   provider:
+  #     vault:
+  #       server: "http://my.vault.server:8200"
+  #       path: "secret"
+  #       version: "v2"
+  #       auth:
+  #         tokenSecretRef:
+  #           name: "vault-token"
+  #           key: "token"
 
-clusterSecretStore:
-  name: vault-backend
-  spec:
-    provider:
-      vault:
-        server: "http://my.vault.server:8200"
-        path: "secret"
-        version: "v2"
-        auth:
-          tokenSecretRef:
-            name: "vault-token"
-            key: "token"
+clusterSecretStore: {}
+  # name: vault-backend
+  # spec:
+  #   provider:
+  #     vault:
+  #       server: "http://my.vault.server:8200"
+  #       path: "secret"
+  #       version: "v2"
+  #       auth:
+  #         tokenSecretRef:
+  #           name: "vault-token"
+  #           key: "token"
+
+externalSecret: {}
+  # name: external-secret
+  # spec:
+  #   refreshInterval: "15s"
+  #   secretStoreRef:
+  #     name: vault-backend
+  #     kind: SecretStore
+  #   target:
+  #     name: example-sync
+  #   data:
+  #   - secretKey: foobar
+  #     remoteRef:
+  #       key: foo
+  #       property: my-value
