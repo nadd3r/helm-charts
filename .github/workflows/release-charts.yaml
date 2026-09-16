@@ -8,7 +8,8 @@ on:
       - "charts/**"
 
 permissions:
-  contents: write
+  contents: read
+  packages: write
 
 jobs:
   detect-changes:
