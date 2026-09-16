@@ -1,0 +1,19 @@
+# Secrets
+*.pub
+*.key
+secrets.yaml
+secret.yaml
+# Template config files
+/cluster.toml
+# Kubernetes
+kubeconfig
+# Python
+__pycache__/
+*.py[cod]
+# Misc.
+.claude/
+.private/
+.venv/
+.DS_Store
+Thumbs.db
+.testing/

@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "hverlin.mise-vscode",
+    "IronGeek.vscode-env",
+    "PKief.material-icon-theme",
+    "redhat.vscode-yaml",
+    "oxc.oxc-vscode",
+  ]
+}
