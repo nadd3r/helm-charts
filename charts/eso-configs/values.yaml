@@ -11,7 +11,16 @@ accessToken: {}
   # # Required
   # token: "my-access-token"
 
-secretStore: {}
+secretStore:
+  name: vault-backend
+  provider: gitlab
+  url: www.example.com
+  accessToken:
+    name: token-name
+    key: my-key
+  projectID: projectid
+  groupIDs: groupid
+  environment: environment
   # name: vault-backend
   # spec:
   #   provider:
