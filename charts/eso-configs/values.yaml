@@ -19,8 +19,19 @@ secretStore:
     name: token-name
     key: my-key
   projectID: projectid
-  groupIDs: groupid
+  groupIDs:
+    - 12345
+    - 67890
   environment: environment
+  conditions:
+    - namespaces:
+        - external-secrets
+        - default
+  caProvider:
+    key: ca-bundle
+    name: name
+    namespace: namespace
+    type: Secret
   # name: vault-backend
   # spec:
   #   provider:
