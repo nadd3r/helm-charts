@@ -50,11 +50,12 @@ spec:
               secretKeyRef:
               {{- if .Values.kanbn.database.existingSecret.secretName }}
                 name: {{ .Values.kanbn.database.existingSecret.secretName }}
+                key: {{ .Values.kanbn.database.existingSecret.urlKey }}
               {{- end }}
               {{- if not .Values.kanbn.database.existingSecret.secretName }}
                 name: {{ .Chart.Name }}-secrets
+                key: uri
               {{- end }}
-                key: {{ .Values.kanbn.database.key | default "uri" }}
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
@@ -73,11 +74,12 @@ spec:
               secretKeyRef:
               {{- if .Values.kanbn.database.existingSecret.secretName }}
                 name: {{ .Values.kanbn.database.existingSecret.secretName }}
+                key: {{ .Values.kanbn.database.existingSecret.urlKey }}
               {{- end }}
               {{- if not .Values.kanbn.database.existingSecret.secretName }}
                 name: {{ .Chart.Name }}-secrets
+                key: uri 
               {{- end }}
-                key: {{ .Values.kanbn.database.key | default "uri" }}
           - name: NEXT_PUBLIC_BASE_URL
             value: {{ .Values.kanbn.publicUrl }}
           - name: LOG_LEVEL
