@@ -84,18 +84,78 @@ secretStore: {}
   #       name: name
   #       namespace: namespace
 
+# Define a Cluster wide secret store
 clusterSecretStore: {}
-  # name: vault-backend
-  # spec:
-  #   provider:
-  #     vault:
-  #       server: "http://my.vault.server:8200"
-  #       path: "secret"
-  #       version: "v2"
-  #       auth:
-  #         tokenSecretRef:
-  #           name: "vault-token"
-  #           key: "token"
+  # # Global values that are shared between providers
+  # global:
+  #   # Name of the backend
+  #   # Required
+  #   name: backend
+  #   # Provider type
+  #   # Required
+  #   # gitlab or vault
+  #   provider: gitlab
+  #   # Url of the server
+  #   # Required
+  #   url: www.example.com
+  #   # Conditions that will need to be meet for the secret store
+  #   # Optional
+  #   conditions:
+  #     - namespaces:
+  #         - external-secrets
+  #         - default
+  #   # Bring your own certs if using a private CA
+  #   # Optional
+  #   caProvider:
+  #     key: ca-bundle
+  #     name: name
+  #     namespace: namespace
+  #     type: Secret
+
+  # # Define the GitlabProvider
+  # # Required if provider is gitlab
+  # gitlab:
+  #   # Set the access token that will be used to authenticate with Gitlab
+  #   # Required
+  #   accessToken:
+  #     # Name is optional if accessToken is defined
+  #     name: token-name
+  #     # Required
+  #     key: my-key
+  #   # ID number of the project that will hold the secrets
+  #   # Required
+  #   projectID: projectid
+  #   # To sync variables only from specific groups specify them here
+  #   # Optional
+  #   groupIDs:
+  #     - 12345
+  #     - 67890
+  #   # Set the environment that the secrets are in
+  #   # Required
+  #   environment: environment
+
+  # # Define the Vault/OpenBao provider
+  # # Required if provider is vault
+  # vault:
+  #   # Set the path that secrets will exist in
+  #   # Required
+  #   # Defaults to kv
+  #   path: kv
+  #   # Set the version
+  #   # Required
+  #   # Defaults to v2
+  #   version: v2
+  #   # Specify the authentication method that will be used to access the vault
+  #   # Required
+  #   authMethod: kubernetes
+  #   # Define the kubernetes authentication method
+  #   # Required if authMethod is kubernetes
+  #   kubernetesAuth:
+  #     mountPath: path
+  #     role: role
+  #     serviceAccount:
+  #       name: name
+  #       namespace: namespace
 
 # Define an External Secret resource
 externalSecret: {}

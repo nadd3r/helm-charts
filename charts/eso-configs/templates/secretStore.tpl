@@ -28,9 +28,9 @@ spec:
             name: {{ .Values.accessToken.name }}
             {{- end }}
             {{- if not .Values.accessToken }}
-            name: {{ .Values.secretStore.global.accessToken.name }}
+            name: {{ .Values.secretStore.gitlab.accessToken.name }}
             {{- end }}
-            key: {{ .Values.secretStore.global.accessToken.key }}
+            key: {{ .Values.secretStore.gitlab.accessToken.key }}
       {{- if .Values.secretStore.global.caProvider }}
       caProvider:
         key: {{ .Values.secretStore.global.caProvider.key }}
@@ -45,7 +45,6 @@ spec:
       server: {{ .Values.secretStore.global.url }}
       path: {{ .Values.secretStore.vault.path | default "kv" }}
       version: {{ .Values.secretStore.vault.version | default "v2"}}
-    {{- end }}
     {{- if .Values.secretStore.global.caProvider }}
       caProvider:
         key: {{ .Values.secretStore.global.caProvider.key }}
@@ -62,4 +61,5 @@ spec:
           name: {{ .Values.secretStore.vault.kubernetesAuth.serviceAccount.name }}
           namespace: {{ .Values.secretStore.vault.kubernetesAuth.serviceAccount.namespace }}
         {{- end }}
+    {{- end }}
 {{- end }}
