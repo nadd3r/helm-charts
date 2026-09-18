@@ -24,8 +24,8 @@ kanbn:
 
   database:
     existingSecret:
-      secretName: ""
-      urlKey: ""
+      secretName: "kanbn-db-app"
+      urlKey: "uri"
     key: ""
     url: ""
 
