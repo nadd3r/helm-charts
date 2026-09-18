@@ -55,7 +55,7 @@ spec:
       auth:
         {{ .Values.clusterSecretStore.vault.authMethod }}:
         {{- if eq .Values.clusterSecretStore.vault.authMethod "kubernetes" }}
-        mountPath: {{ .Values.clusterSecretStore.vault.kubernetesAuth.mountPath }}
+        path: {{ .Values.clusterSecretStore.vault.kubernetesAuth.mountPath }}
         role: {{ .Values.clusterSecretStore.vault.kubernetesAuth.role }}
         serviceAccountRef:
           name: {{ .Values.clusterSecretStore.vault.kubernetesAuth.serviceAccount.name }}
