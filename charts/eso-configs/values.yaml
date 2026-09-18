@@ -1,40 +1,208 @@
+# Define the access token that will be used to authenticate with the secrets manager
+accessToken: {}
+  # # Name of the token.
+  # # Required
+  # name: gitlab-secrets
+  # # Labes to attach to the secret
+  # # Optional
+  # labels:
+  #   type: gitlab
+  # # The token used for authentication.
+  # # Required
+  # token: "my-access-token"
+
+# Define a namespaced Secret Store that will hold the secrets
 secretStore: {}
-  # name: vault-backend
-  # spec:
-  #   provider:
-  #     vault:
-  #       server: "http://my.vault.server:8200"
-  #       path: "secret"
-  #       version: "v2"
-  #       auth:
-  #         tokenSecretRef:
-  #           name: "vault-token"
-  #           key: "token"
+  # # Global values that are shared between providers
+  # global:
+  #   # Name of the backend
+  #   # Required
+  #   name: backend
+  #   # Provider type
+  #   # Required
+  #   # gitlab or vault
+  #   provider: vault
+  #   # Url of the server
+  #   # Required
+  #   url: www.example.com
+  #   # Conditions that will need to be meet for the secret store
+  #   # Optional
+  #   conditions:
+  #     - namespaces:
+  #         - external-secrets
+  #         - default
+  #   # Bring your own certs if using a private CA
+  #   # Optional
+  #   caProvider:
+  #     key: ca-bundle
+  #     name: name
+  #     namespace: namespace
+  #     type: Secret
 
+  # # Define the GitlabProvider
+  # # Required if provider is gitlab
+  # gitlab:
+  #   # Set the access token that will be used to authenticate with Gitlab
+  #   # Required
+  #   accessToken:
+  #     # Name is optional if accessToken is defined
+  #     name: token-name
+  #     # Required
+  #     key: my-key
+  #   # ID number of the project that will hold the secrets
+  #   # Required
+  #   projectID: projectid
+  #   # To sync variables only from specific groups specify them here
+  #   # Optional
+  #   groupIDs:
+  #     - 12345
+  #     - 67890
+  #   # Set the environment that the secrets are in
+  #   # Required
+  #   environment: environment
+
+  # # Define the Vault/OpenBao provider
+  # # Required if provider is vault
+  # vault:
+  #   # Set the path that secrets will exist in
+  #   # Required
+  #   # Defaults to kv
+  #   path: kv
+  #   # Set the version
+  #   # Required
+  #   # Defaults to v2
+  #   version: v2
+  #   # Specify the authentication method that will be used to access the vault
+  #   # Required
+  #   authMethod: kubernetes
+  #   # Define the kubernetes authentication method
+  #   # Required if authMethod is kubernetes
+  #   kubernetesAuth:
+  #     mountPath: path
+  #     role: role
+  #     serviceAccount:
+  #       name: name
+  #       namespace: namespace
+
+# Define a Cluster wide secret store
 clusterSecretStore: {}
-  # name: vault-backend
-  # spec:
-  #   provider:
-  #     vault:
-  #       server: "http://my.vault.server:8200"
-  #       path: "secret"
-  #       version: "v2"
-  #       auth:
-  #         tokenSecretRef:
-  #           name: "vault-token"
-  #           key: "token"
+  # # Global values that are shared between providers
+  # global:
+  #   # Name of the backend
+  #   # Required
+  #   name: backend
+  #   # Provider type
+  #   # Required
+  #   # gitlab or vault
+  #   provider: gitlab
+  #   # Url of the server
+  #   # Required
+  #   url: www.example.com
+  #   # Conditions that will need to be meet for the secret store
+  #   # Optional
+  #   conditions:
+  #     - namespaces:
+  #         - external-secrets
+  #         - default
+  #   # Bring your own certs if using a private CA
+  #   # Optional
+  #   caProvider:
+  #     key: ca-bundle
+  #     name: name
+  #     namespace: namespace
+  #     type: Secret
 
+  # # Define the GitlabProvider
+  # # Required if provider is gitlab
+  # gitlab:
+  #   # Set the access token that will be used to authenticate with Gitlab
+  #   # Required
+  #   accessToken:
+  #     # Name is optional if accessToken is defined
+  #     name: token-name
+  #     # Required
+  #     key: my-key
+  #   # ID number of the project that will hold the secrets
+  #   # Required
+  #   projectID: projectid
+  #   # To sync variables only from specific groups specify them here
+  #   # Optional
+  #   groupIDs:
+  #     - 12345
+  #     - 67890
+  #   # Set the environment that the secrets are in
+  #   # Required
+  #   environment: environment
+
+  # # Define the Vault/OpenBao provider
+  # # Required if provider is vault
+  # vault:
+  #   # Set the path that secrets will exist in
+  #   # Required
+  #   # Defaults to kv
+  #   path: kv
+  #   # Set the version
+  #   # Required
+  #   # Defaults to v2
+  #   version: v2
+  #   # Specify the authentication method that will be used to access the vault
+  #   # Required
+  #   authMethod: kubernetes
+  #   # Define the kubernetes authentication method
+  #   # Required if authMethod is kubernetes
+  #   kubernetesAuth:
+  #     mountPath: path
+  #     role: role
+  #     serviceAccount:
+  #       name: name
+  #       namespace: namespace
+
+# Define an External Secret resource
 externalSecret: {}
+  # # Name of the External Secret
+  # # Required
   # name: external-secret
-  # spec:
-  #   refreshInterval: "15s"
-  #   secretStoreRef:
-  #     name: vault-backend
-  #     kind: SecretStore
-  #   target:
-  #     name: example-sync
+  # # Time between syncs
+  # # Optional. Defaults to 60 seconds
+  # refreshInterval: "15s"
+  # # Labels to attach to the External Secret
+  # # Optional
+  # labels:
+  #   type: external-secret
+  # # Secret Store or Cluster Secret Store that will hold the desired secret
+  # # Required
+  # secretStore:
+  #   # Name of the Secret Store or Cluster Secret Store
+  #   name: vault-backend
+  #   # Kind of Secret Store
+  #   # ClusterSecretStore or SecretStore
+  #   kind: SecretStore
+  # # Define the resulting secret
+  # targetSecret:
+  #   # Name of the desired secret
+  #   name: example-sync
+  #   # Define the creation policy of the secret
+  #   # Defaults to Owner
+  #   # Owner, Orphan, Merge, None
+  #   policy: Owner
+  #   # Define that data that will make the secret
+  #   # At least one entry is required
+  #   # Multiple entries allowed
   #   data:
+  #     # Name of the key that will be in the secret
+  #     # Required
   #   - secretKey: foobar
+  #     # Where to pull the secret from
+  #     # Required
   #     remoteRef:
+  #       # The key that holds the value in the secret store
+  #       # Required
   #       key: foo
+  #       # If the key has multiple properties specify the specific property
+  #       # Optional
+  #       # Needed if using OpenBao or HashiCorp Vault
   #       property: my-value
+  #   - secretKey: toobar
+  #     remoteRef:
+  #       key: bar
+  #       property: their-value
