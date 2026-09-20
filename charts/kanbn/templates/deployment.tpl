@@ -81,7 +81,7 @@ spec:
                 key: uri 
               {{- end }}
           - name: NEXT_PUBLIC_BASE_URL
-            value: {{ .Values.kanbn.publicUrl }}
+            value: {{ .Values.kanbn.publicUrl | quote }}
           - name: LOG_LEVEL
             value: {{ .Values.kanbn.logLevel }}
           - name: NEXT_PUBLIC_ALLOW_CREDENTIALS

@@ -17,8 +17,8 @@ kanbn:
     pullPolicy: IfNotPresent
     tag: ""
 
-  publicUrl: ""
-  allowUserPass: false
+  publicUrl: "https://kanbn.example.com"
+  allowUserPass: true
   disableSignUps: false
   logLevel: info
 
@@ -30,10 +30,10 @@ kanbn:
     url: ""
 
   s3:
-    region: ""
-    endpoint: ""
+    region: "us-east-1"
+    endpoint: "https://s3.example.com"
     forcePathStyle: true
-    avatarSizeLimit: ""
+    avatarSizeLimit: "10485760"
     storageUrl: ""
     domain: ""
     accessKey:
@@ -45,7 +45,7 @@ kanbn:
       secret: ""
 
     buckets:
-      global: ""
+      global: "test"
       avatar: ""
       attachments: ""
 
@@ -53,10 +53,11 @@ kanbn:
     existingSecret:
       secretName: ""
       key: ""
+    # Generate with openssl rand -base64 32
     value: ""
 
   oidc:
-    enabled: true
+    enabled: false
     discoveryUrl: ""
     client:
       existingSecret:
