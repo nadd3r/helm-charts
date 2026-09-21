@@ -206,3 +206,43 @@ externalSecret: {}
   #     remoteRef:
   #       key: bar
   #       property: their-value
+
+clusterSecretStores:
+  global:
+    annotations:
+      external-secrets.io/ignore-maintenance-checks: "true"
+    provider:
+      vault:
+        caProvider:
+          type: Secret
+          name: vault-ca
+          key: ca.crt
+          namespace: external-secrets
+
+  main1:
+    provider:
+      vault:
+        server: https://vault-a.example.com
+        path: secret
+        version: "v2"
+        auth:
+          kubernetes:
+            mountPath: kubernetes
+            role: eso
+            serviceAccountRef:
+              name: external-secrets
+              namespace: external-secrets
+
+  main2:
+    provider:
+      vault:
+        server: https://vault-b.example.com
+        path: secret
+        version: "v2"
+        auth:
+          kubernetes:
+            mountPath: kubernetes
+            role: eso
+            serviceAccountRef:
+              name: external-secrets
+              namespace: external-secrets
