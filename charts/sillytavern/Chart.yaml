@@ -1,0 +1,13 @@
+apiVersion: v2
+name: sillytavern
+description: A local interface for text generation LLMs.
+type: application
+sources:
+  - https://github.com/SillyTavern/SillyTavern/tree/release
+  - https://github.com/nadd3r/helm-charts
+version: 0.1.12
+appVersion: "1.18.0"
+maintainers:
+  - name: David Nader
+    email: noreply@sud0.net
+    url: https://github.com/nadd3r
