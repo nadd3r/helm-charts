@@ -1,4 +1,4 @@
-{{- if and .Values.config.basicAuthMode (not .Values.config.basicAuthUser.existingSecret) }}
+{{- if and .Values.config.basicAuthMode (not .Values.config.basicAuthUser.existingSecret.name) }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -12,7 +12,7 @@ data:
   SILLYTAVERN_BASICAUTHUSER_PASSWORD: {{ .Values.config.basicAuthUser.password | b64enc | quote }}
 {{- end }}
 
-{{- if and .Values.config.adminUserPassword (not .Values.config.adminUserPassword.existingSecret) }}
+{{- if and .Values.config.adminUserPassword (not .Values.config.adminUserPassword.existingSecret.name) }}
 apiVersion: v1
 kind: Secret
 metadata:

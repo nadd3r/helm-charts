@@ -262,7 +262,10 @@ config:
   basicAuthMode: false
   # Basic authentication credentials
   basicAuthUser:
-    existingSecret: ""
+    existingSecret:
+      name: ""
+      usernameKey: "username"
+      passwordKey: "password"
 
     username: "user"
     password: "password"
@@ -303,7 +306,9 @@ config:
   enableDiscreetLogin: false
 
   adminUserPassword:
-    existingSecret: ""
+    existingSecret:
+      name: ""
+      key: "DEFAULT_USER_PASSWORD"
     password: "changeMe"
 
   # If `basicAuthMode` and this are enabled then
