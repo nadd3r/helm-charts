@@ -26,7 +26,7 @@ fullnameOverride: ""
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   # Specifies whether a service account should be created.
-  create: true
+  create: false
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account.
@@ -98,7 +98,7 @@ httpRoute:
       # namespace: default
   # Hostnames matching HTTP header.
   hostnames:
-    - chart-example.local
+    - sillytavern.example.com
   # List of rules and filters applied.
   rules:
     - matches:
@@ -301,6 +301,11 @@ config:
   enableUserAccounts: false
   # Enable discreet login mode: hides user list on the login screen
   enableDiscreetLogin: false
+
+  adminUserPassword:
+    existingSecret: ""
+    password: "changeMe"
+
   # If `basicAuthMode` and this are enabled then
   # the username and passwords for basic auth are the same as those
   # for the individual accounts
