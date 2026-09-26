@@ -127,7 +127,7 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ include "sillytavern.fullname" . }}-env
-{{- if .Values.config.basicAuthMode }}
+{{- if (eq .Values.config.basicAuthMode "true") }}
           - secretRef:
               name: {{ include "sillytavern.fullname" . }}-secrets
 {{- end }}

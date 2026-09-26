@@ -5,7 +5,7 @@ type: application
 sources:
   - https://github.com/SillyTavern/SillyTavern/tree/release
   - https://github.com/nadd3r/helm-charts
-version: 0.1.13
+version: 0.1.14
 appVersion: "1.18.0"
 maintainers:
   - name: David Nader
