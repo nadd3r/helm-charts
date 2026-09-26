@@ -52,6 +52,52 @@ spec:
       resources:
         {{- tpl (toYaml .) $ | nindent 8 }}
 {{- end }}
+      initContainers:
+        - name: generate-config
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          workingDir: /home/node/app
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              if [ ! -f config/config.yaml ]; then
+                cp default/config.yaml config/config.yaml
+              fi
+              npm run init
+              echo "config generated; exiting"
+          volumeMounts:
+            - name: sillytavern-data
+              mountPath: /home/node/app/config
+              subPath: config
+            - name: sillytavern-data
+              mountPath: /home/node/app/data
+              subPath: data
+        - name: set-default-user-password
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          workingDir: /home/node/app
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              if [ -z "$ST_DEFAULT_USER_PASSWORD" ]; then
+                echo "ST_DEFAULT_USER_PASSWORD is empty" >&2
+                exit 1
+              fi
+              # Official handle is default-user
+              node recover.js default-user "$ST_DEFAULT_USER_PASSWORD"
+          env:
+            - name: ST_DEFAULT_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "sillytavern.fullname" . }}-admin-password
+                  key: DEFAULT_USER_PASSWORD
+          volumeMounts:
+            - name: sillytavern-data
+              mountPath: /home/node/app/config
+              subPath: config
+            - name: sillytavern-data
+              mountPath: /home/node/app/data
+              subPath: data
       containers:
         - name: {{ .Chart.Name }}
 {{- with .Values.securityContext }}
