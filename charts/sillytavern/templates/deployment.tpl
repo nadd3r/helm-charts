@@ -72,7 +72,7 @@ spec:
             - name: sillytavern-data
               mountPath: /home/node/app/data
               subPath: data
-      {{- if (eq .Values.config.enableUserAccounts true) }}
+{{- if (eq .Values.config.enableUserAccounts true) }}
         - name: set-default-user-password
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           workingDir: /home/node/app
@@ -99,7 +99,7 @@ spec:
             - name: sillytavern-data
               mountPath: /home/node/app/data
               subPath: data
-      {{- end }}
+{{- end }}
       containers:
         - name: {{ .Chart.Name }}
 {{- with .Values.securityContext }}
