@@ -2,6 +2,86 @@
 
 lockfile_version = 1
 
+[[tools.cilium-cli]]
+version = "0.20.0"
+backend = "aqua:cilium/cilium-cli"
+specifiers = ["0.20.0"]
+
+[tools.cilium-cli."platforms.linux-arm64"]
+checksum = "sha256:9a9281dc79bd10a61fa35078b8ab63eaf491ab2f47edc6b9a3541b2fe4ede3ff"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475789"
+
+[tools.cilium-cli."platforms.linux-arm64-musl"]
+checksum = "sha256:9a9281dc79bd10a61fa35078b8ab63eaf491ab2f47edc6b9a3541b2fe4ede3ff"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475789"
+
+[tools.cilium-cli."platforms.linux-x64"]
+checksum = "sha256:94adc5c3be44d8240df91cec520536686f8a1eb29e5bc70c4c1c80137f00d764"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475792"
+
+[tools.cilium-cli."platforms.linux-x64-musl"]
+checksum = "sha256:94adc5c3be44d8240df91cec520536686f8a1eb29e5bc70c4c1c80137f00d764"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475792"
+
+[tools.cilium-cli."platforms.macos-arm64"]
+checksum = "sha256:2850449e321c21e9556c312d0b6885838523d294b7e0b58955697507463a57cc"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475790"
+
+[tools.cilium-cli."platforms.macos-x64"]
+checksum = "sha256:cc338e326235e76e3924f032d8a6eb41bf751d94bb04fce70d5f80014fc179d9"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-darwin-amd64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475794"
+
+[tools.cilium-cli."platforms.windows-x64"]
+checksum = "sha256:d96cf9811608cf945326196ccf4dd251ba91358ead3587f52023680e4460ba19"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-windows-amd64.zip"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475785"
+
+[[tools."github:digitalstudium/helmfmt"]]
+version = "0.6.1"
+backend = "github:digitalstudium/helmfmt"
+specifiers = ["latest"]
+
+[tools."github:digitalstudium/helmfmt"."platforms.linux-arm64"]
+checksum = "sha256:e8814de2e8a12ed3aa87b6117305de762d92cb4967723168e049c85d1e7ce40c"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700425"
+
+[tools."github:digitalstudium/helmfmt"."platforms.linux-arm64-musl"]
+checksum = "sha256:e8814de2e8a12ed3aa87b6117305de762d92cb4967723168e049c85d1e7ce40c"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700425"
+
+[tools."github:digitalstudium/helmfmt"."platforms.linux-x64"]
+checksum = "sha256:dfd558f672c50a9699971ea8eaa10405a5f03afb884ecaa7f2a0b509a3df9c13"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700436"
+
+[tools."github:digitalstudium/helmfmt"."platforms.linux-x64-musl"]
+checksum = "sha256:dfd558f672c50a9699971ea8eaa10405a5f03afb884ecaa7f2a0b509a3df9c13"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700436"
+
+[tools."github:digitalstudium/helmfmt"."platforms.macos-arm64"]
+checksum = "sha256:2f21977796478a497c7d580210d4195fff1f59597cd119e1985dca5726371be1"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700435"
+
+[tools."github:digitalstudium/helmfmt"."platforms.macos-x64"]
+checksum = "sha256:f5d2cb73d78d2064a1e225e52f79b8027009ce947d121a0a327f9adfc679662e"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Darwin_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700428"
+
+[tools."github:digitalstudium/helmfmt"."platforms.windows-x64"]
+checksum = "sha256:c5c368cbd2ff26ee53ade71d6a463d0e38feb31dbe1a924f4a3aedfb47d73167"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Windows_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700427"
+
 [[tools.helm]]
 version = "4.3.0"
 backend = "aqua:helm/helm"
@@ -121,6 +201,46 @@ checksum = "sha256:a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c
 url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe"
 url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012788"
 provenance = "github-attestations"
+
+[[tools.k9s]]
+version = "0.51.0"
+backend = "aqua:derailed/k9s"
+specifiers = ["0.51.0"]
+
+[tools.k9s."platforms.linux-arm64"]
+checksum = "sha256:3ee05c82e5f9198928a4e86133608ba6a2c10a2244d6a7789e820f78319d640c"
+url = "https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/derailed/k9s/releases/assets/440226045"
+
+[tools.k9s."platforms.linux-arm64-musl"]
+checksum = "sha256:3ee05c82e5f9198928a4e86133608ba6a2c10a2244d6a7789e820f78319d640c"
+url = "https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/derailed/k9s/releases/assets/440226045"
+
+[tools.k9s."platforms.linux-x64"]
+checksum = "sha256:c3752ad51a5a4015a113819c4eeb6e55a4d0e4b8e652494797532f6fc8161dd7"
+url = "https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/derailed/k9s/releases/assets/440224321"
+
+[tools.k9s."platforms.linux-x64-musl"]
+checksum = "sha256:c3752ad51a5a4015a113819c4eeb6e55a4d0e4b8e652494797532f6fc8161dd7"
+url = "https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/derailed/k9s/releases/assets/440224321"
+
+[tools.k9s."platforms.macos-arm64"]
+checksum = "sha256:9b8c0e8f461e5d33aeee43a67f5ef4aff646a008a786887b8266cbb153c610cc"
+url = "https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/derailed/k9s/releases/assets/440224326"
+
+[tools.k9s."platforms.macos-x64"]
+checksum = "sha256:7e8802c57c45a0cd389e8fc38472243fe4cf48d8ad5957e189ce370e19e5eda0"
+url = "https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/derailed/k9s/releases/assets/440224322"
+
+[tools.k9s."platforms.windows-x64"]
+checksum = "sha256:bba299f1877913979831543a008f2e104995d2ea4ac8f23d7f49c0444857d973"
+url = "https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Windows_amd64.zip"
+url_api = "https://api.github.com/repos/derailed/k9s/releases/assets/440224317"
 
 [[tools.kind]]
 version = "0.33.0"
