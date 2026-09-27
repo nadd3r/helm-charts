@@ -90,8 +90,8 @@ spec:
             - name: ST_DEFAULT_USER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "sillytavern.fullname" . }}-admin-password
-                  key: DEFAULT_USER_PASSWORD
+                  name: {{ .Values.config.adminUserPassword.existingSecret.name }}
+                  key: {{ .Values.config.adminUserPassword.existingSecret.key }}
           volumeMounts:
             - name: sillytavern-data
               mountPath: /home/node/app/config
