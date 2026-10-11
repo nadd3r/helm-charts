@@ -42,7 +42,12 @@ data:
   SILLYTAVERN_WHITELIST: {{ printf "[%s]" (join ", " $quoted) | squote }}
 {{- end }}
 
-  SILLYTAVERN_BASICAUTHMODE: {{ .Values.config.basicAuthMode | default "true" | quote }}
+{{- if .Values.config.basicAuthMode }}
+  SILLYTAVERN_BASICAUTHMODE: "true"
+{{- end }}
+{{- if not .Values.config.basicAuthMode }}
+  SILLYTAVERN_BASICAUTHMODE: "false"
+{{- end }}
 
   SILLYTAVERN_ENABLECORSPROXY: {{ .Values.config.enableCorsProxy | default "false" | quote }}
   SILLYTAVERN_CORS_ENABLED: {{ .Values.config.cors.enabled | default "true" | quote }}
