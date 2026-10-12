@@ -2,6 +2,7 @@ apiVersion: v2
 name: sillytavern
 description: A local interface for text generation LLMs.
 type: application
+icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/sillytavern.png
 sources:
   - https://github.com/SillyTavern/SillyTavern/tree/release
   - https://github.com/nadd3r/helm-charts
@@ -11,3 +12,7 @@ maintainers:
   - name: David Nader
     email: noreply@sud0.net
     url: https://github.com/nadd3r
+keywords:
+  - ai
+  - roleplay
+  - sillytavern
