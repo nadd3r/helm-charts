@@ -6,8 +6,8 @@ icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/sillytavern.pn
 sources:
   - https://github.com/SillyTavern/SillyTavern/tree/release
   - https://github.com/nadd3r/helm-charts
-version: 0.1.18
-appVersion: "1.18.0"
+version: 0.1.19
+appVersion: "1.19.0"
 maintainers:
   - name: David Nader
     email: noreply@sud0.net
