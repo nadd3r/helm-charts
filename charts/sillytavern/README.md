@@ -3,9 +3,9 @@
 <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/sillytavern.png" align="right" width="92" alt="ssillytavern logo">
 
 
-![Version: 0.1.18](https://img.shields.io/badge/Version-0.1.18-informational?style=flat)
+![Version: 0.1.19](https://img.shields.io/badge/Version-0.1.19-informational?style=flat)
 ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat)
-![AppVersion: 1.18.0](https://img.shields.io/badge/AppVersion-1.18.0-informational?style=flat)
+![AppVersion: 1.19.0](https://img.shields.io/badge/AppVersion-1.19.0-informational?style=flat)
 
 LLM Frontend for Power Users
 
