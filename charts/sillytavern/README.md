@@ -59,3 +59,4 @@ Alternatively, a YAML file that specifies the values for the above parameters ca
 
 ```console
 helm install sillytavern oci://ghcr.io/nadd3r/helm-charts/sillytavern -f values.yaml
+```
