@@ -40,4 +40,4 @@ run = "shellcheck {staged_files}"
 
 [pre-commit.commands.helm-docs]
 glob = ["**/README.md.gotmpl"]
-run = "helm-docs --chart-search-root=charts"
+run = "helm-docs --chart-search-root=."
