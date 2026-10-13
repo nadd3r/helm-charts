@@ -1,11 +1,6 @@
+# -- Define any Cluster Secret Stores. 
+# Format should be the name of the store and then the spec underneath
 clusterSecretStores: {}
-  # global:
-  #   caProvider:
-  #     type: Secret
-  #     name: vault-ca
-  #     key: ca.crt
-  #     namespace: external-secrets
-
   # main1:
   #   provider:
   #     gitlab:
@@ -32,3 +27,66 @@ clusterSecretStores: {}
   #           serviceAccountRef:
   #             name: external-secrets
   #             namespace: external-secrets
+
+# -- Define any Secret Stores. 
+# Format should be the name of the store and then the spec underneath
+secretStores: {}
+  # main1:
+  #   provider:
+  #     gitlab:
+  #       url: https://gitlab.example.com
+  #       auth:
+  #         SecretRef:
+  #           accessToken:
+  #             name: access
+  #             key: token
+  #             namespace: default
+  #       projectID: "12345"
+  #       inheritFromGroups: false
+
+  # main2:
+  #   provider:
+  #     vault:
+  #       server: https://vault-b.example.com
+  #       path: secret
+  #       version: "v2"
+  #       auth:
+  #         kubernetes:
+  #           mountPath: kubernetes
+  #           role: eso
+  #           serviceAccountRef:
+  #             name: external-secrets
+  #             namespace: external-secrets
+
+# -- Define any External Secrets. 
+# Format should be the name of the store and then the spec underneath
+externalSecrets: {}
+  # example1:
+  #   refreshInterval: 1h0m0s
+  #   secreetStoreRef:
+  #     kind: SecretStore
+  #     name: main1
+  #   target:
+  #     name: example1
+  #     creationPolicy: Owner
+  #   data:
+  #     - secretKey: key
+  #       remoteRef:
+  #         key: mykey
+
+# -- Define any Secrets. 
+# Format should be the name of the secret and then the data underneath
+secrets: {}
+  # mysecret:
+  #   username: user
+  #   password: pass
+
+# -- Define any extra objects you would like to include. 
+# This requires the full manifest file to be defined.
+extraObjects: {}
+# - apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: example1
+#   data:
+#     options: myoptions
