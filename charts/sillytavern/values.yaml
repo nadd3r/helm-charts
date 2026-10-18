@@ -74,7 +74,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: sillytavern.example.com
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -143,7 +143,7 @@ livenessProbe:
 readinessProbe:
   # exec:
   #   command: ["sh", "-c", "node", "src/healthcheck.js"]
-  # initialDelaySeconds: 30
+  # initialDelaySeconds: 20
   # periodSeconds: 5
   # failureThreshold: 5
 
@@ -176,7 +176,7 @@ affinity: {}
 
 persistence:
   # -- Persist the Sillytavern data, configs, plugins, etc. If not set defaults to an emptydir which will be wiped if the container rolls.
-  enabled: false
+  enabled: true
   # -- Use an existing PVC instead of creating one; when set, no PVC is rendered.
   existingClaim: ""
   # -- StorageClass for the PVC; empty uses the cluster default.
@@ -189,53 +189,43 @@ persistence:
 # -- Extra initContainers (templated) added to the pod.
 initContainers: []
 
+auth:
+  # Basic authentication credentials
+  basicAuthUser:
+    # If using an existing secret set the name and the keys that hold the username and password
+    existingSecret:
+      name: 
+      usernameKey: user
+      passwordKey: password
+
+    # If not using an existing secret set the username and password here.
+    username: "user"
+    password: "password"
+
+  # When enableUserAccounts is true you must define a password for the default user.
+  # Failure to define a default password can result in the pod crashing.
+  adminUserPassword:
+    # If using an existing secret set the name and the key that holds the password
+    existingSecret:
+      name: 
+      key: password
+
+    # If not using an existing secret set the password here.
+    password: "changeMe"
+
 config:
   # -- DATA CONFIGURATION --
   # Root directory for user data storage
   dataRoot: ./data
   # -- SERVER CONFIGURATION --
-  # Listen for incoming connections
-  listen: true
-  # Listen on a specific address, supports IPv4 and IPv6
-  listenAddress:
-    ipv4: 0.0.0.0
-    ipv6: "[::]"
-  # Enables IPv6 and/or IPv4 protocols. Need to have at least one enabled!
-  # - Use option "auto" to automatically detect support
-  # - Use true or false (no qoutes) to enable or disable each protocol
-  protocol:
-    ipv4: true
-    ipv6: false
-  # Prefers IPv6 for DNS. Enable this on ISPs that don't have issues with IPv6
-  dnsPreferIPv6: false
-  # -- BROWSER LAUNCH CONFIGURATION --
-  browserLaunch:
-    # Open the browser automatically on server startup.
-    enabled: false
-    # Browser to use for opening the URL.
-    # NOT SUPPORTED ON ANDROID DEVICES.
-    # - Use "default" to use the system default browser
-    # - Use "firefox", "chrome", "edge"
-    browser: "default"
-    # Overrides the hostname that opens in the browser.
-    # - Use "auto" to let the server decide
-    # - Use options like 'localhost', 'st.example.com'
-    hostname: "auto"
-    # Overrides the port for run in the browser.
-    # - Use -1 to use the server port.
-    # - Specify a port to override the default.
-    port: -1
-    # Avoids using 'localhost' as the hostname in auto mode.
-    # Use if you don't have 'localhost' in your hosts file
-    avoidLocalhost: false
   # Server port
   port: 8000
   # Interval in seconds to write a heartbeat file. Set to 0 to disable.
   # This is used primarily for Docker healthchecks.
-  heartbeatInterval: 0
+  heartbeatInterval: 10
   # Enable HTTP/HTTPS keep-alive globally.
   # Disabling restores old Node 18 behavior, can help if ECONNRESET and other network errors occur.
-  enableKeepAlive: false
+  enableKeepAlive: true
   # -- SSL options --
   ssl:
     # Enable SSL/TLS encryption
@@ -260,15 +250,7 @@ config:
   whitelistDockerHosts: true
   # Toggle basic authentication for endpoints
   basicAuthMode: false
-  # Basic authentication credentials
-  basicAuthUser:
-    existingSecret:
-      name: ""
-      usernameKey: "username"
-      passwordKey: "password"
 
-    username: "user"
-    password: "password"
   # Enables CORS proxy middleware
   enableCorsProxy: false
   # CORS settings (applied to all routes)
@@ -305,12 +287,6 @@ config:
   # Enable discreet login mode: hides user list on the login screen
   enableDiscreetLogin: false
 
-  adminUserPassword:
-    existingSecret:
-      name: ""
-      key: "DEFAULT_USER_PASSWORD"
-    password: "changeMe"
-
   # If `basicAuthMode` and this are enabled then
   # the username and passwords for basic auth are the same as those
   # for the individual accounts
@@ -342,19 +318,6 @@ config:
       - ::1
       - 127.0.0.1
 
-  # Host whitelist configuration. Recommended if you're using a listen mode
-  hostWhitelist:
-    # Enable or disable host whitelisting
-    enabled: false
-    # Scan incoming requests for potential host header spoofing
-    scan: true
-    # List of allowed hosts. Do not include localhost or IPs, these are safe.
-    # Use a dot to create subdomain patterns.
-    # Examples:
-    # - example.com
-    # - .trycloudflare.com
-    hosts: []
-
   # Perform whitelist checks against server-side HTTP requests that resolve to private IP addresses.
   # This is an additional layer of security to prevent Server-Side Request Forgery (SSRF) attacks.
   # Recommended when listen mode is enabled, or if your server is accessible by untrusted users.
@@ -383,7 +346,7 @@ config:
   # Disable CSRF protection - NOT RECOMMENDED
   disableCsrfProtection: false
   # Disable startup security checks - NOT RECOMMENDED
-  securityOverride: false
+  securityOverride: true
   # -- LOGGING CONFIGURATION --
   logging:
     # Enable access logging to access.log file and console output
@@ -441,8 +404,6 @@ config:
     format: "jpg"
     # JPG thumbnail quality (0-100)
     quality: 95
-    # Maximum thumbnail dimensions per type [width, height]
-    dimensions: { "bg": [160, 90], "avatar": [96, 144], "persona": [96, 144] }
 
   # PERFORMANCE-RELATED CONFIGURATION
   performance:

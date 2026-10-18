@@ -1,8 +1,6 @@
 # Secrets
 *.pub
 *.key
-secrets.yaml
-secret.yaml
 # Template config files
 /cluster.toml
 # Kubernetes
