@@ -24,29 +24,29 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{- define "sillytavern.env" -}}
-    {{- range $k, $v := .values -}}
-        {{- if kindIs "map" $v -}}
-            {{- range $sk, $sv := $v -}}
+  {{- range $k, $v := .values -}}
+    {{- if kindIs "map" $v -}}
+      {{- range $sk, $sv := $v -}}
                 {{- include "sillytavern.env" (dict "root" $.root "values" (dict (printf "%s_%s" (upper $k) (upper $sk)) $sv)) -}}
-            {{- end -}}
-        {{- else if kindIs "slice" $v }}
-          {{- $items := list }}
-          {{- range $v }}
-            {{- $items = append $items (printf "\"%s\"" .) }}
-          {{- end }}
-          {{- $formatted := printf "[%s]" (join ", " $items) }}
-{{ printf "SILLYTAVERN_%s" (upper $k) }}: {{ printf "'%s'" $formatted }}
-{{- else -}}
-            {{- if or (kindIs "bool" $v) (kindIs "float64" $v) (kindIs "int" $v) (kindIs "int64" $v) -}}
-                {{- $v = $v | toString | quote -}}
-            {{- else -}}
-                {{- $v = tpl (toString $v) $.root | toString | quote }}
-            {{- end -}}
-            {{- if and ($v) (ne $v "\"\"") }}
-{{ printf "SILLYTAVERN_%s" (upper $k) }}: {{ $v }}
-            {{- end }}
-        {{- end -}}
+      {{- end -}}
+    {{- else if kindIs "slice" $v }}
+      {{- $items := list }}
+      {{- range $v }}
+        {{- $items = append $items (printf "\"%s\"" .) }}
+      {{- end }}
+      {{- $formatted := printf "[%s]" (join ", " $items) }}
+      {{ printf "SILLYTAVERN_%s" (upper $k) }}: {{ printf "'%s'" $formatted }}
+    {{- else -}}
+      {{- if or (kindIs "bool" $v) (kindIs "float64" $v) (kindIs "int" $v) (kindIs "int64" $v) -}}
+        {{- $v = $v | toString | quote -}}
+      {{- else -}}
+        {{- $v = tpl (toString $v) $.root | toString | quote }}
+      {{- end -}}
+      {{- if and ($v) (ne $v "\"\"") }}
+        {{ printf "SILLYTAVERN_%s" (upper $k) }}: {{ $v }}
+      {{- end }}
     {{- end -}}
+  {{- end -}}
 {{- end -}}
 
 {{/*

@@ -9,10 +9,10 @@ data:
   SILLYTAVERN_LISTEN: "true"
   SILLYTAVERN_HOSTWHITELIST_ENABLED: "true"
   SILLYTAVERN_THUMBNAILS_DIMESIONS: '{ "bg": [160, 90], "avatar": [96, 144], "persona": [96, 144] }'
-  {{- if .Values.ingress.enabled }}
+{{- if .Values.ingress.enabled }}
   SILLYTAVERN_HOSTWHITELIST_HOSTS: '["{{ (index .Values.ingress.hosts 0 "host") }}"]'
-  {{- end }}
-  {{- if .Values.httpRoute.enabled }}
+{{- end }}
+{{- if .Values.httpRoute.enabled }}
   SILLYTAVERN_HOSTWHITELIST_HOSTS: '["{{ (index .Values.httpRoute.hostnames 0) }}"]'
-  {{- end }}
+{{- end }}
   {{- include "sillytavern.env" (dict "root" . "values" .Values.config) | indent 2 }}

@@ -88,15 +88,15 @@ spec:
               node recover.js default-user "$ST_DEFAULT_USER_PASSWORD"
           env:
             - name: ST_DEFAULT_USER_PASSWORD
-              {{- if .Values.auth.adminUserPassword.existingSecret.name }}
+  {{- if .Values.auth.adminUserPassword.existingSecret.name }}
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.auth.adminUserPassword.existingSecret.name }}
                   key: {{ .Values.auth.adminUserPassword.existingSecret.key }}
-              {{- end }}
-              {{- if not .Values.auth.adminUserPassword.existingSecret.name }}
+  {{- end }}
+  {{- if not .Values.auth.adminUserPassword.existingSecret.name }}
               value: {{ .Values.auth.adminUserPassword.password }}
-              {{- end }}
+  {{- end }}
           volumeMounts:
             - name: sillytavern-data
               mountPath: /home/node/app/config
@@ -136,7 +136,7 @@ spec:
           - secretRef:
               name: {{ include "sillytavern.fullname" . }}-basicauth-secrets
 {{- end }}
-          {{- if and .Values.auth.basicAuthUser.existingSecret.name .Values.config.basicAuthMode }}
+{{- if and .Values.auth.basicAuthUser.existingSecret.name .Values.config.basicAuthMode }}
           env:
           - name: SILLYTAVERN_BASICAUTHUSER_USERNAME
             valueFrom:
@@ -148,7 +148,7 @@ spec:
               secretKeyRef:
                 name: {{ .Values.auth.basicAuthUser.existingSecret.name }}
                 key: {{ .Values.auth.basicAuthUser.existingSecret.passwordKey }}
-          {{- end }}
+{{- end }}
           volumeMounts:
           - mountPath: /home/node/app/config
             name: sillytavern-data
