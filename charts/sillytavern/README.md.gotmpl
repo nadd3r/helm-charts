@@ -60,6 +60,17 @@ Alternatively, a YAML file that specifies the values for the above parameters ca
 helm install sillytavern oci://ghcr.io/nadd3r/helm-charts/sillytavern -f values.yaml
 ```
 
+## Limitations
+
+Sillytavern requires some form of authentication or whitelisting. Without these the pod will repeatedly crash unless `securityOverride` is set to `true`.
+This means at least one of the following must be enabled:
+- `basicAuthMode`
+- `whiteListMode`
+- `enableUserAccounts`
+
+> [!Warning]
+> If using `enableUserAccounts` then all admin users must have a password associated with them. If no password is associate with an admin user then `securityOverride` must be set to `true` to prevent crashing.
+
 {{ template "chart.valuesHeader" . }}
 
 {{ template "chart.valuesTable" . }}

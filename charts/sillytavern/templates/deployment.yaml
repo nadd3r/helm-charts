@@ -88,10 +88,15 @@ spec:
               node recover.js default-user "$ST_DEFAULT_USER_PASSWORD"
           env:
             - name: ST_DEFAULT_USER_PASSWORD
+              {{- if .Values.auth.adminUserPassword.existingSecret.name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.adminUserPassword.existingSecret.name }}
-                  key: {{ .Values.config.adminUserPassword.existingSecret.key }}
+                  name: {{ .Values.auth.adminUserPassword.existingSecret.name }}
+                  key: {{ .Values.auth.adminUserPassword.existingSecret.key }}
+              {{- end }}
+              {{- if not .Values.auth.adminUserPassword.existingSecret.name }}
+              value: {{ .Values.auth.adminUserPassword.password }}
+              {{- end }}
           volumeMounts:
             - name: sillytavern-data
               mountPath: /home/node/app/config
@@ -127,10 +132,23 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ include "sillytavern.fullname" . }}-env
-{{- if .Values.config.basicAuthMode }}
+{{- if and (not .Values.auth.basicAuthUser.existingSecret.name) .Values.config.basicAuthMode }}
           - secretRef:
-              name: {{ include "sillytavern.fullname" . }}-secrets
+              name: {{ include "sillytavern.fullname" . }}-basicauth-secrets
 {{- end }}
+          {{- if and .Values.auth.basicAuthUser.existingSecret.name .Values.config.basicAuthMode }}
+          env:
+          - name: SILLYTAVERN_BASICAUTHUSER_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.auth.basicAuthUser.existingSecret.name }}
+                key: {{ .Values.auth.basicAuthUser.existingSecret.usernameKey }}
+          - name: SILLYTAVERN_BASICAUTHUSER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.auth.basicAuthUser.existingSecret.name }}
+                key: {{ .Values.auth.basicAuthUser.existingSecret.passwordKey }}
+          {{- end }}
           volumeMounts:
           - mountPath: /home/node/app/config
             name: sillytavern-data
