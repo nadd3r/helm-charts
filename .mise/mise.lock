@@ -43,44 +43,44 @@ url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.0/cilium-win
 url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/530475785"
 
 [[tools."github:digitalstudium/helmfmt"]]
-version = "0.6.1"
+version = "0.7.0"
 backend = "github:digitalstudium/helmfmt"
 specifiers = ["latest"]
 
 [tools."github:digitalstudium/helmfmt"."platforms.linux-arm64"]
-checksum = "sha256:e8814de2e8a12ed3aa87b6117305de762d92cb4967723168e049c85d1e7ce40c"
-url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700425"
+checksum = "sha256:06bf4a4f78fa4028d3ced7772d5d55718d82a63bb10456c9ec59619a5f96b7e4"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/594874540"
 
 [tools."github:digitalstudium/helmfmt"."platforms.linux-arm64-musl"]
-checksum = "sha256:e8814de2e8a12ed3aa87b6117305de762d92cb4967723168e049c85d1e7ce40c"
-url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700425"
+checksum = "sha256:06bf4a4f78fa4028d3ced7772d5d55718d82a63bb10456c9ec59619a5f96b7e4"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/594874540"
 
 [tools."github:digitalstudium/helmfmt"."platforms.linux-x64"]
-checksum = "sha256:dfd558f672c50a9699971ea8eaa10405a5f03afb884ecaa7f2a0b509a3df9c13"
-url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700436"
+checksum = "sha256:56d1724e08188bfda84f32eaf447a0fba7f67c60b1423691e94a2ab3783d66b3"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/594874541"
 
 [tools."github:digitalstudium/helmfmt"."platforms.linux-x64-musl"]
-checksum = "sha256:dfd558f672c50a9699971ea8eaa10405a5f03afb884ecaa7f2a0b509a3df9c13"
-url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Linux_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700436"
+checksum = "sha256:56d1724e08188bfda84f32eaf447a0fba7f67c60b1423691e94a2ab3783d66b3"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/594874541"
 
 [tools."github:digitalstudium/helmfmt"."platforms.macos-arm64"]
-checksum = "sha256:2f21977796478a497c7d580210d4195fff1f59597cd119e1985dca5726371be1"
-url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700435"
+checksum = "sha256:4de4d9425f41c5ac3cb79a745609a1e086d087072eafba48e59424091da77ef4"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/594874565"
 
 [tools."github:digitalstudium/helmfmt"."platforms.macos-x64"]
-checksum = "sha256:f5d2cb73d78d2064a1e225e52f79b8027009ce947d121a0a327f9adfc679662e"
-url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Darwin_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700428"
+checksum = "sha256:fb0531e4844695360c9e0979e538f1eaeea9faeb49bb24e39e90590840cade46"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Darwin_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/594874567"
 
 [tools."github:digitalstudium/helmfmt"."platforms.windows-x64"]
-checksum = "sha256:c5c368cbd2ff26ee53ade71d6a463d0e38feb31dbe1a924f4a3aedfb47d73167"
-url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.6.1/helmfmt_Windows_x86_64.tar.gz"
-url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/497700427"
+checksum = "sha256:43091637ea68b297322b6cd69f3711c822195150de2e704705203f4d1ed3377c"
+url = "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Windows_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/digitalstudium/helmfmt/releases/assets/594874542"
 
 [[tools.go]]
 version = "1.27.2"
