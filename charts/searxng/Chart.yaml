@@ -1,0 +1,23 @@
+apiVersion: v2
+name: searxng
+description: A local interface for text generation LLMs.
+type: application
+icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/searxng.png
+sources:
+  - https://github.com/searxng/searxng
+  - https://github.com/nadd3r/helm-charts
+version: 0.0.1
+appVersion: "2026.10.19-81371861f"
+maintainers:
+  - name: David Nader
+    email: noreply@sud0.net
+    url: https://github.com/nadd3r
+keywords:
+  - search
+  - engine
+  - searxng
+dependencies:
+  - name: valkey
+    version: "0.12.0"
+    repository: "oci://ghcr.io/valkey-io/valkey-helm"
+    condition: valkey.enabled

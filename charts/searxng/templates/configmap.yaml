@@ -1,0 +1,188 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "searxng.fullname" . }}-settings
+data:
+  settings.yml: |
+    general:
+      debug: {{ .Values.searxng.general.debug }}
+      instance_name: {{ .Values.searxng.general.instanceName | quote }}
+      privacypolicy_url: {{ .Values.searxng.general.privacyPolicyUrl }}
+      # use true to use your own donation page written in searx/info/en/donate.md
+      # use false to disable the donation link
+      donation_url: false
+      # mailto:contact@example.com
+      contact_url: {{ .Values.searxng.general.contactUrl }}
+      enable_metrics: true
+      open_metrics: {{ .Values.searxng.general.openMetricsPassword | squote }}
+
+    brand:
+      docs_url: {{ .Values.searxng.brand.docsUrl }}
+      public_instances: {{ .Values.searxng.brand.publicInstances }}
+      wiki_url: {{ .Values.searxng.brand.wikiUrl }}
+      issue_url: {{ .Values.searxng.brand.issueUrl }}
+      {{- if .Values.searxng.brand.custom }}
+      custom:
+      {{- if .Values.searxng.brand.custom.links }}
+        links:
+        {{- range $key, $value := .Values.searxng.brand.custom.links }}
+          {{ $key | title }}: {{ $value }}
+        {{- end }}
+      {{- else }}
+        links: {}
+      {{- end }}
+      {{- if .Values.searxng.brand.custom.pwaColors }}
+        pwa_colors:
+        {{- range $key, $value := .Values.searxng.brand.custom.pwaColors }}
+          {{ $key }}: {{ $value }}
+        {{- end }}
+      {{- else }}
+        pwa_colors: {}
+      {{- end }}
+      {{- else }}
+      custom: {}
+      {{- end }}
+
+    search:
+      safe_search: {{ .Values.searxng.search.safeSearch }}
+      autocomplete: {{ .Values.searxng.search.autoComplete | quote }}
+      autocomplete_min: {{ .Values.searxng.search.autoCompleteMin }}
+      favicon_resolver: {{ .Values.searxng.search.faviconResolver | quote }}
+      default_lang: {{ .Values.searxng.search.defaultLanguage | quote }}
+      ban_time_on_fail: {{ .Values.searxng.search.banTimeOnFail }}
+      max_ban_time_on_fail: {{ .Values.searxng.search.maxBanTimeOnFail }}
+      suspended_times:
+        SearxEngineAccessDenied: {{ .Values.searxng.search.suspendedTimes.searxEngineAccessDenied }}
+        SearxEngineCaptcha: {{ .Values.searxng.search.suspendedTimes.searxEngineCaptcha }}
+        SearxEngineTooManyRequests: {{ .Values.searxng.search.suspendedTimes.searxEngineTooManyRequests }}
+        cf_SearxEngineCaptcha: {{ .Values.searxng.search.suspendedTimes.cfSearxEngineCaptcha }}
+        cf_SearxEngineAccessDenied: {{ .Values.searxng.search.suspendedTimes.cfSearxEngineAccessDenied }}
+        recaptcha_SearxEngineCaptcha: {{ .Values.searxng.search.suspendedTimes.recaptchaSearxEngineCaptcha }}
+      formats:
+      {{- range .Values.searxng.search.formats }}
+        - {{ . }}
+      {{- end }}
+
+    server:
+      port: {{ .Values.service.port }}
+      bind_address: "0.0.0.0"
+      base_url: {{ .Values.searxng.server.baseUrl }}
+      limiter: {{ .Values.searxng.server.limiter }}
+      public_instance: {{ .Values.searxng.server.publicInstance }}
+      image_proxy: {{ .Values.searxng.server.imageProxy }}
+      http_protocol_version: {{ .Values.searxng.server.httpProtocolVersion | quote }}
+      method: {{ .Values.searxng.server.method | quote }}
+      default_http_headers:
+        X-Content-Type-Options: {{ .Values.searxng.server.defaultHttpHeaders.xContentTypeOptions }}
+        X-Download-Options: {{ .Values.searxng.server.defaultHttpHeaders.xDownloadOptions }}
+        X-Robots-Tag: {{ .Values.searxng.server.defaultHttpHeaders.xRobotsTag }}
+        Referrer-Policy: {{ .Values.searxng.server.defaultHttpHeaders.referrerPolicy }}
+
+    valkey:
+      url: {{ .Values.searxng.valkey.url }}
+
+    ui:
+      static_path: {{ .Values.searxng.ui.staticPath | quote }}
+      templates_path: {{ .Values.searxng.ui.templatesPath | quote }}
+      query_in_title: {{ .Values.searxng.ui.queryInTitle }}
+      default_theme: {{ .Values.searxng.ui.defaultTheme }}
+      center_alignment: {{ .Values.searxng.ui.centerAlignment }}
+      cache_url: {{ .Values.searxng.ui.cacheUrl | quote }}
+      default_locale: {{ .Values.searxng.ui.defaultLocale | quote }}
+      results_on_new_tab: {{ .Values.searxng.ui.resultsOnNewTab }}
+      theme_args:
+        simple_style: {{ .Values.searxng.ui.themeArgs.simpleStyle }}
+      search_on_category_select: {{ .Values.searxng.ui.searchOnCategorySelect }}
+      hotkeys: {{ .Values.searxng.ui.hotkeys | quote }}
+      url_formatting: {{ .Values.searxng.ui.urlFormatting }}
+
+    preferences:
+    {{- if .Values.searxng.preferences.lock }}
+      lock:
+      {{- range .Values.searxng.preferences.lock }}
+      - {{ . }}
+      {{- end }}
+    {{- else }}
+      lock: []
+    {{- end }}
+
+    outgoing:
+      request_timeout: {{ .Values.searxng.outgoing.requestTimeout }}
+      max_request_timeout: {{ .Values.searxng.outgoing.maxRequestTimeout }}
+      useragent_suffix: {{ .Values.searxng.outgoing.userAgentSuffix | quote }}
+      pool_connections: {{ .Values.searxng.outgoing.poolConnections }}
+      enable_http2: {{ .Values.searxng.outgoing.enableHttp2 }}
+
+    plugins:
+    {{- range $name, $config := .Values.searxng.plugins }}
+      {{ $name }}:
+        active: {{ $config.active }}
+    {{ end }}
+
+    categories_as_tabs:
+    {{- range .Values.searxng.categoriesAsTabs }}
+      {{ . }}:
+    {{- end }}
+
+    engines:
+    {{- with .Values.searxng.engines }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+
+    doi_resolvers:
+    {{- range $name, $value := .Values.searxng.doiResolvers }}
+      {{ $name }}: {{ $value | squote }}
+    {{- end }}
+
+    default_doi_resolver: {{ .Values.searxng.defaultDoiResolver | squote }}
+  
+  limiter.toml: |
+    [botdetection]
+    ipv4_prefix = {{ .Values.limiter.ipv4Prefix }}
+    ipv6_prefix = {{ .Values.limiter.ipv6Prefix }}
+    trusted_proxies = [
+    {{- range .Values.limiter.trustedProxies }}
+      {{ . | squote }},
+    {{- end }}
+    ]
+
+    [botdetection.ip_limit]
+    filter_link_local = {{ .Values.limiter.filterLinkLocal }}
+    link_token = {{ .Values.limiter.linkToken }}
+
+    [botdetection.ip_lists]
+    block_ip = [
+    {{- range .Values.limiter.blockIP }}
+      {{ . | squote }},
+    {{- end }}
+    ]
+
+    pass_ip = [
+    {{- range .Values.limiter.passIP }}
+      {{ . | squote }},
+    {{- end }}
+    ]
+
+    pass_searxng_org = {{ .Values.limiter.passSearxngOrg }}
+
+  favicons.toml: |
+    [favicons]
+    cfg_schema = {{ .Values.favicons.cfgSchema }}
+
+    [favicons.proxy]
+    max_age = {{ .Values.favicons.proxyMaxAge }}
+
+    [favicons.proxy.resolver_map]    
+    "duckduckgo" = "searx.favicons.resolvers.duckduckgo"
+    "allesedv" = "searx.favicons.resolvers.allesedv"
+    "google" = "searx.favicons.resolvers.google"
+    "kagi" = "searx.favicons.resolvers.kagi"
+    "yandex" = "searx.favicons.resolvers.yandex"
+
+    [favicons.cache]
+    db_url = {{ .Values.favicons.cache.dbUrl | quote }}
+    HOLD_TIME = {{ int .Values.favicons.cache.holdTime }}
+    LIMIT_TOTAL_BYTES = {{ .Values.favicons.cache.limitTotalBytes }}
+    BLOB_MAX_BYTES = {{ .Values.favicons.cache.blobMaxBytes }}
+    MAINTENANCE_MODE = {{ .Values.favicons.cache.maintenanceMode | quote }}
+    MAINTENANCE_PERIOD = {{ int .Values.favicons.cache.maintenancePeriod }}
