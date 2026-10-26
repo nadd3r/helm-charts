@@ -58,20 +58,20 @@ service:
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  enabled: true
+  enabled: false
   className: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: searxng.tsud0.net
+    - host: searxng.example.com
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: []
     # - secretName: chart-example-tls
     #   hosts:
-    #     - chart-example.local
+    #     - searxng.example.com
 
 # -- Expose the service via gateway-api HTTPRoute
 # Requires Gateway API resources and suitable controller installed within the cluster
@@ -88,7 +88,7 @@ httpRoute:
     # namespace: default
   # Hostnames matching HTTP header.
   hostnames:
-  - chart-example.local
+  - searxng.example.com
   # List of rules and filters applied.
   rules:
   - matches:
@@ -154,7 +154,7 @@ affinity: {}
 
 persistence:
   # -- Persist the Sillytavern data, configs, plugins, etc. If not set defaults to an emptydir which will be wiped if the container rolls.
-  enabled: true
+  enabled: false
   # -- Use an existing PVC instead of creating one; when set, no PVC is rendered.
   existingClaim: ""
   # -- StorageClass for the PVC; empty uses the cluster default.
@@ -211,9 +211,9 @@ searxng:
   
   server:
     baseUrl: http://searxng.example.com
-    limiter: true
+    limiter: false
     publicInstance: false
-    secretKey: 3a71706edd274b5655b503aa889b1d263894663cc3e155af3ad286fb18e84797
+    secretKey: 
     imageProxy: false
     httpProtocolVersion: '1.0'
     method: GET
@@ -3417,13 +3417,13 @@ limiter:
   filterLinkLocal: true
   linkToken: true
   
-  blockIP:
-    - 93.184.216.34
-    - 257.1.1.1
+  blockIP: []
+    # - 93.184.216.34
+    # - 257.1.1.1
   
-  passIP:
-    - 192.168.0.0/16
-    - fe80::/10
+  passIP: []
+    # - 192.168.0.0/16
+    # - fe80::/10
   
   passSearxngOrg: true
 
@@ -3439,7 +3439,7 @@ favicons:
     maintenancePeriod: 3600
 
 valkey:
-  enabled: true
+  enabled: false
   auth:
     enabled: false
     usersExistingSecret: ""

@@ -13,48 +13,48 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+{{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{- end }}
       labels:
         {{- include "searxng.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
+{{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
+{{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+{{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{- end }}
       serviceAccountName: {{ include "searxng.serviceAccountName" . }}
-      {{- with .Values.podSecurityContext }}
+{{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- with .Values.securityContext }}
+{{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+{{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          {{- with .Values.livenessProbe }}
+{{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.readinessProbe }}
+{{- end }}
+{{- with .Values.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.resources }}
+{{- end }}
+{{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+{{- end }}
           envFrom:
           - secretRef:
               name: {{ include "searxng.fullname" . }}-secrets
@@ -68,34 +68,34 @@ spec:
           - name: settings
             mountPath: /etc/searxng/favicons.toml
             subPath: favicons.toml
-          {{- if .Values.persistence.enabled }}
+{{- if .Values.persistence.enabled }}
           - name: data
             mountPath: /var/cache/searxng
-          {{- end }}
-          {{- with .Values.extraVolumeMounts }}
+{{- end }}
+{{- with .Values.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+{{- end }}
       volumes:
       - name: settings
         configMap:
           name: {{ include "searxng.fullname" . }}-settings
-      {{- if .Values.persistence.enabled }}
+{{- if .Values.persistence.enabled }}
       - name: data
         persistentVolumeClaim:
           claimName: {{ include "searxng.fullname" . }}-data
-      {{- end }}
-      {{- with .Values.extraVolumes }}
+{{- end }}
+{{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
+{{- end }}
+{{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
+{{- end }}
+{{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
+{{- end }}
+{{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{- end }}
