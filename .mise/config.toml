@@ -21,3 +21,4 @@ yq = '4.53.6'
 'github:digitalstudium/helmfmt' = "latest"
 helm-docs = '1.14.2'
 go = '1.27.2'
+kubeconform = '0.8.0'

@@ -1,0 +1,17 @@
+apiVersion: v2
+name: open-webui
+description: A home for self-hosted AI.
+type: application
+version: 0.0.1
+appVersion: "0.12.5"
+icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/open-webui-light.svg
+sources:
+  - https://github.com/open-webui/open-webui
+  - https://github.com/nadd3r/helm-charts
+maintainers:
+  - name: David Nader
+    email: noreply@sud0.net
+    url: https://github.com/nadd3r
+keywords:
+  - open-webui
+  - AI

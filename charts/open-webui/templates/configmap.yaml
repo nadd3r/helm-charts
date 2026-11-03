@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "open-webui.fullname" . }}-env
+  namespace: {{ .Release.Namespace }}
+data:
+  WEBUI_URL: chart-example.local
