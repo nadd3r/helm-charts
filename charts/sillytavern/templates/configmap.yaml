@@ -2,17 +2,184 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "sillytavern.fullname" . }}-env
+  name: {{ template "sillytavern.fullname" . }}-config
   namespace: {{ .Release.Namespace }}
 data:
-  SILLYTAVERN_BROWSER_LAUNCH: "false"
-  SILLYTAVERN_LISTEN: "true"
-  SILLYTAVERN_HOSTWHITELIST_ENABLED: "true"
-  SILLYTAVERN_THUMBNAILS_DIMESIONS: '{ "bg": [160, 90], "avatar": [96, 144], "persona": [96, 144] }'
-{{- if .Values.ingress.enabled }}
-  SILLYTAVERN_HOSTWHITELIST_HOSTS: '["{{ (index .Values.ingress.hosts 0 "host") }}"]'
-{{- end }}
-{{- if .Values.httpRoute.enabled }}
-  SILLYTAVERN_HOSTWHITELIST_HOSTS: '["{{ (index .Values.httpRoute.hostnames 0) }}"]'
-{{- end }}
-  {{- include "sillytavern.env" (dict "root" . "values" .Values.config) | indent 2 }}
+  config.yaml: |
+    dataRoot: ./data
+    listen: true
+    listenAddress:
+      ipv4: 0.0.0.0
+      ipv6: '[::]'
+    protocol:
+        ipv4: true
+        ipv6: false
+    dnsPreferIPv6: false
+    browserLaunch:
+      enabled: false
+      browser: 'default'
+      hostname: 'auto'
+      port: -1
+      avoidLocalhost: false
+    port: {{ .Values.service.port }}
+    heartbeatInterval: 10
+    enableKeepAlive: {{ .Values.sillytavern.enableKeepAlive }}
+    ssl:
+      enabled: false
+      certPath: "./certs/cert.pem"
+      keyPath: "./certs/privkey.pem"
+      keyPassphrase: ""
+    whitelistMode: {{ .Values.sillytavern.whitelistMode }}
+    enableForwardedWhitelist: {{ .Values.sillytavern.enableForwardedWhitelist }}
+    whitelist:
+    {{- with .Values.sillytavern.whitelist }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    whitelistDockerHosts: true
+    basicAuthMode: {{ .Values.sillytavern.basicAuthMode }}
+    basicAuthUser:
+      username: "user"
+      password: "password"
+    enableCorsProxy: false
+    cors:
+      enabled: true
+      origin:
+        - "null"
+      methods:
+        - "OPTIONS"
+      allowedHeaders: []
+      exposedHeaders: []
+      credentials: false
+      maxAge: null
+    requestProxy:
+      enabled: false
+      url: "socks5://username:password@example.com:1080"
+      bypass:
+        - localhost
+        - 127.0.0.1
+    enableUserAccounts: {{ .Values.sillytavern.enableUserAccounts }}
+    enableDiscreetLogin: {{ .Values.sillytavern.enableDiscreetLogin }}
+    perUserBasicAuth: {{ .Values.sillytavern.perUserBasicAuth }}
+
+    sso:
+      autheliaAuth: {{ .Values.sillytavern.sso.autheliaAuth }}
+      authentikAuth: {{ .Values.sillytavern.sso.authentikAuth }}
+      trustedProxies:
+      {{- with .Values.sillytavern.sso.trustedProxies }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+    hostWhitelist:
+      enabled: {{ .Values.sillytavern.hostWhitelist.enabled }}
+      scan: {{ .Values.sillytavern.hostWhitelist.scan }}
+      hosts:
+      {{- with .Values.sillytavern.hostWhitelist.hosts }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+    privateAddressWhitelist:
+      enabled: {{ .Values.sillytavern.privateAddressWhitelist.enabled }}
+      allowUnresolvedHosts: {{ .Values.sillytavern.privateAddressWhitelist.allowUnresolvedHosts }}
+      log:
+        blockedRequests: {{ .Values.sillytavern.privateAddressWhitelist.log.blockedRequests }}
+        allowedRequests: {{ .Values.sillytavern.privateAddressWhitelist.log.allowedRequests }}
+      allowedRanges:
+        {{- with .Values.sillytavern.privateAddressWhitelist.allowedRanges }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+
+    sessionTimeout: -1
+    disableCsrfProtection: false
+    securityOverride: true
+    logging:
+      enableAccessLog: true
+      minLogLevel: 0
+    rateLimiting:
+      preferRealIpHeader: false
+      basicAuthMaxAttempts: 5
+      accountsLoginMaxAttempts: 5
+      accountsRecoverMaxAttempts: 5
+      accountsResetMaxAttempts: 5
+    forwardedHeaders:
+      xRealIp: true
+      xForwardedFor: true
+      cfConnectingIp: false
+
+    backups:
+      allowFullDataBackup: true
+      common:
+        numberOfBackups: 50
+      chat:
+        enabled: true
+        checkIntegrity: true
+        maxTotalBackups: -1
+        throttleInterval: 10000
+
+    thumbnails:
+      enabled: true
+      format: "jpg"
+      quality: 95
+      dimensions: { 'bg': [160, 90], 'avatar': [96, 144], 'persona': [96, 144] }
+
+    performance:
+      lazyLoadCharacters: false
+      memoryCacheCapacity: '100mb'
+      useDiskCache: true
+      requestCompression:
+        enabled: false
+        minPayloadSize: '256kb'
+        maxPayloadSize: '8mb'
+        timeout: 4000
+
+    cacheBuster:
+      enabled: false
+      userAgentPattern: ''
+
+    allowKeysExposure: false
+    skipContentCheck: false
+    whitelistImportDomains:
+      - localhost
+      - cdn.discordapp.com
+      - files.catbox.moe
+      - raw.githubusercontent.com
+    requestOverrides: []
+
+    extensions:
+      enabled: true
+      autoUpdate: true
+      models:
+        autoDownload: true
+        classification: Cohee/distilbert-base-uncased-go-emotions-onnx
+        captioning: Xenova/vit-gpt2-image-captioning
+        embedding: Cohee/jina-embeddings-v2-base-en
+        speechToText: Xenova/whisper-small
+        textToSpeech: Xenova/speecht5_tts
+
+    git:
+      backend: auto
+
+    enableDownloadableTokenizers: true
+    promptPlaceholder: "[Start a new chat]"
+    openai:
+      randomizeUserId: false
+      captionSystemPrompt: ""
+    deepl:
+      formality: default
+    mistral:
+      enablePrefix: false
+    ollama:
+      keepAlive: -1
+      batchSize: -1
+    claude:
+      enableSystemPromptCache: false
+      cachingAtDepth: -1
+      extendedTTL: false
+      enableAdaptiveThinking: false
+    gemini:
+      apiVersion: 'v1beta'
+      thoughtSignatures: true
+      enableSystemPromptCache: false
+      image:
+        personGeneration: 'allow_adult'
+    enableServerPlugins: false
+    enableServerPluginsAutoUpdate: true

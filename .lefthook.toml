@@ -22,7 +22,7 @@ stage_fixed = true
 [pre-commit.commands.format-helm]
 glob = ["**/templates/**/*.{yaml,yml,tpl}"]
 run = "helmfmt --files {staged_files}"
-staged_fixeed = true
+staged_fixed = true
 
 [pre-commit.commands.format-yaml]
 glob = ["*.yaml", "*.yml"]
@@ -41,3 +41,4 @@ run = "shellcheck {staged_files}"
 [pre-commit.commands.helm-docs]
 glob = ["*.README.md.gotmpl"]
 run = "helm-docs --chart-search-root=charts"
+stage_fixed = true
