@@ -18,6 +18,6 @@ keywords:
   - searxng
 dependencies:
   - name: valkey
-    version: "0.12.0"
+    version: "0.12.1"
     repository: "oci://ghcr.io/valkey-io/valkey-helm"
     condition: valkey.enabled
