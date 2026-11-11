@@ -2,17 +2,190 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "sillytavern.fullname" . }}-env
+  name: {{ template "sillytavern.fullname" . }}-config
   namespace: {{ .Release.Namespace }}
 data:
-  SILLYTAVERN_BROWSER_LAUNCH: "false"
-  SILLYTAVERN_LISTEN: "true"
-  SILLYTAVERN_HOSTWHITELIST_ENABLED: "true"
-  SILLYTAVERN_THUMBNAILS_DIMESIONS: '{ "bg": [160, 90], "avatar": [96, 144], "persona": [96, 144] }'
-{{- if .Values.ingress.enabled }}
-  SILLYTAVERN_HOSTWHITELIST_HOSTS: '["{{ (index .Values.ingress.hosts 0 "host") }}"]'
-{{- end }}
-{{- if .Values.httpRoute.enabled }}
-  SILLYTAVERN_HOSTWHITELIST_HOSTS: '["{{ (index .Values.httpRoute.hostnames 0) }}"]'
-{{- end }}
-  {{- include "sillytavern.env" (dict "root" . "values" .Values.config) | indent 2 }}
+  config.yaml: |
+    dataRoot: ./data
+    listen: true
+    listenAddress:
+      ipv4: 0.0.0.0
+      ipv6: '[::]'
+    protocol:
+        ipv4: true
+        ipv6: false
+    dnsPreferIPv6: false
+    browserLaunch:
+      enabled: false
+      browser: 'default'
+      hostname: 'auto'
+      port: -1
+      avoidLocalhost: false
+    port: {{ .Values.service.port }}
+    heartbeatInterval: 10
+    enableKeepAlive: {{ .Values.sillytavern.enableKeepAlive }}
+    ssl:
+      enabled: false
+      certPath: "./certs/cert.pem"
+      keyPath: "./certs/privkey.pem"
+      keyPassphrase: ""
+    whitelistMode: {{ .Values.sillytavern.whitelistMode }}
+    enableForwardedWhitelist: {{ .Values.sillytavern.enableForwardedWhitelist }}
+    whitelist:
+    {{- with .Values.sillytavern.whitelist }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    whitelistDockerHosts: true
+    basicAuthMode: {{ .Values.sillytavern.basicAuthMode }}
+    basicAuthUser:
+      username: "user"
+      password: "password"
+    enableCorsProxy: false
+    cors:
+      enabled: true
+      origin:
+        - "null"
+      methods:
+        - "OPTIONS"
+      allowedHeaders: []
+      exposedHeaders: []
+      credentials: false
+      maxAge: null
+    requestProxy:
+      enabled: false
+      url: "socks5://username:password@example.com:1080"
+      bypass:
+        - localhost
+        - 127.0.0.1
+    enableUserAccounts: {{ .Values.sillytavern.enableUserAccounts }}
+    enableDiscreetLogin: {{ .Values.sillytavern.enableDiscreetLogin }}
+    perUserBasicAuth: {{ .Values.sillytavern.perUserBasicAuth }}
+
+    sso:
+      autheliaAuth: {{ .Values.sillytavern.sso.autheliaAuth }}
+      authentikAuth: {{ .Values.sillytavern.sso.authentikAuth }}
+      trustedProxies:
+      {{- with .Values.sillytavern.sso.trustedProxies }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+    hostWhitelist:
+      enabled: {{ .Values.sillytavern.hostWhitelist.enabled }}
+      scan: {{ .Values.sillytavern.hostWhitelist.scan }}
+      hosts:
+      {{- with .Values.sillytavern.hostWhitelist.hosts }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+    privateAddressWhitelist:
+      enabled: {{ .Values.sillytavern.privateAddressWhitelist.enabled }}
+      allowUnresolvedHosts: {{ .Values.sillytavern.privateAddressWhitelist.allowUnresolvedHosts }}
+      log:
+        blockedRequests: {{ .Values.sillytavern.privateAddressWhitelist.log.blockedRequests }}
+        allowedRequests: {{ .Values.sillytavern.privateAddressWhitelist.log.allowedRequests }}
+      allowedRanges:
+        {{- with .Values.sillytavern.privateAddressWhitelist.allowedRanges }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+
+    sessionTimeout: {{ .Values.sillytavern.sessionTimeout }}
+    disableCsrfProtection: {{ .Values.sillytavern.disableCsrfProtection }}
+    securityOverride: {{ .Values.sillytavern.seecurityOverride }}
+    logging:
+      enableAccessLog: {{ .Values.sillytavern.logging.enableAccessLog }}
+      minLogLevel: {{ .Values.sillytavern.logging.minLogLevel }}
+    rateLimiting:
+      preferRealIpHeader: {{ .Values.sillytavern.rateLimiting.preferRealIpHeader }}
+      basicAuthMaxAttempts: {{ .Values.sillytavern.rateLimiting.basicAuthMaxAttempts }}
+      accountsLoginMaxAttempts: {{ .Values.sillytavern.rateLimiting.accountsLoginMaxAttempts }}
+      accountsRecoverMaxAttempts: {{ .Values.sillytavern.rateLimiting.accountsRecoverMaxAttempts }}
+      accountsResetMaxAttempts: {{ .Values.sillytavern.rateLimiting.accountsResetMaxAttempts }}
+    forwardedHeaders:
+      xRealIp: {{ .Values.sillytavern.forwardedHeaders.xRealIp }}
+      xForwardedFor: {{ .Values.sillytavern.forwardedHeaders.xForwardedFor }}
+      cfConnectingIp: {{ .Values.sillytavern.forwardedHeaders.cfConnectingIp }}
+
+    backups:
+      allowFullDataBackup: {{ .Values.sillytavern.backups.allowFullDataBackup }}
+      common:
+        numberOfBackups: {{ .Values.sillytavern.backups.common.numberOfBackups }}
+      chat:
+        enabled: {{ .Values.sillytavern.backups.chat.enabled }}
+        checkIntegrity: {{ .Values.sillytavern.backups.chat.checkIntegrity }}
+        maxTotalBackups: {{ .Values.sillytavern.backups.chat.maxTotalBackups }}
+        throttleInterval: {{ .Values.sillytavern.backups.chat.throttleInterval }}
+
+    thumbnails:
+      enabled: {{ .Values.sillytavern.thumbnails.enabled }}
+      format: {{ .Values.sillytavern.thumbnails.format | quote }}
+      quality: {{ .Values.sillytavern.thumbnails.quality }}
+      dimensions: { {{ .Values.sillytavern.thumbnails.dimensions }} } 
+
+    performance:
+      lazyLoadCharacters: {{ .Values.sillytavern.performance.lazyLoadCharacters }}
+      memoryCacheCapacity: {{ .Values.sillytavern.performance.memoryCacheCapacity | squote }}
+      useDiskCache: {{ .Values.sillytavern.performance.useDiskCache }}
+      requestCompression:
+        enabled: {{ .Values.sillytavern.performance.requestCompression.enabled }}
+        minPayloadSize: {{ .Values.sillytavern.performance.requestCompression.minPayloadSize | squote }}
+        maxPayloadSize: {{ .Values.sillytavern.performance.requestCompression.maxPayloadSize | squote }}
+        timeout: {{ .Values.sillytavern.performance.requestCompression.timeout }}
+
+    cacheBuster:
+      enabled: {{ .Values.sillytavern.cacheBuster.enabled }}
+      userAgentPattern: {{ .Values.sillytavern.cacheBuster.userAgentPattern | squote }}
+
+    allowKeysExposure: {{ .Values.sillytavern.allowKeysExposure }}
+    skipContentCheck: {{ .Values.sillytavern.skipContentCheck }}
+    whitelistImportDomains:
+      {{- with .Values.sillytavern.whitelistImportDomains }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- if .Values.sillytavern.requestOverrides }}
+    requestOverrides:
+      {{- with .Values.sillytavern.requestOverrides }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- else }}
+    requestOverrides: []
+    {{- end }}
+
+    extensions:
+      enabled: {{ .Values.sillytavern.extensions.enabled }}
+      autoUpdate: {{ .Values.sillytavern.extensions.autoUpdate }}
+      models:
+        autoDownload: {{ .Values.sillytavern.extensions.models.autoDownload }}
+        classification: {{ .Values.sillytavern.extensions.models.classification }}
+        captioning: {{ .Values.sillytavern.extensions.models.captioning }}
+        embedding: {{ .Values.sillytavern.extensions.models.embedding }}
+        speechToText: {{ .Values.sillytavern.extensions.models.speechToText }}
+        textToSpeech: {{ .Values.sillytavern.extensions.models.textToSpeech }}
+
+    git:
+      backend: {{ .Values.sillytavern.git.backend }}
+
+    enableDownloadableTokenizers: {{ .Values.sillytavern.enableDownloadableTokenizers }}
+    promptPlaceholder: {{ .Values.sillytavern.promptPlaceholder | quote }}
+    openai:
+      randomizeUserId: {{ .Values.sillytavern.openai.randomizeUserId }}
+      captionSystemPrompt: {{ .Values.sillytavern.openai.captionSystemPrompt | quote }}
+    deepl:
+      formality: {{ .Values.sillytavern.deepl.formality }}
+    mistral:
+      enablePrefix: {{ .Values.sillytavern.mistral.enablePrefix }}
+    ollama:
+      keepAlive: {{ .Values.sillytavern.ollama.keepAlive }}
+      batchSize: {{ .Values.sillytavern.ollama.batchSize }}
+    claude:
+      enableSystemPromptCache: {{ .Values.sillytavern.claude.enableSystemPromptCache }}
+      cachingAtDepth: {{ .Values.sillytavern.claude.cachingAtDepth }}
+      extendedTTL: {{ .Values.sillytavern.claude.extendedTTL }}
+      enableAdaptiveThinking: {{ .Values.sillytavern.claude.enableAdaptiveThinking }}
+    gemini:
+      apiVersion: {{ .Values.sillytavern.gemini.apiVersion | squote }}
+      thoughtSignatures: {{ .Values.sillytavern.gemini.thoughtSignatures }}
+      enableSystemPromptCache: {{ .Values.sillytavern.gemini.enableSystemPromptCache }}
+      image:
+        personGeneration: {{ .Values.sillytavern.gemini.image.personGeneration }}
+    enableServerPlugins: {{ .Values.sillytavern.enableServerPlugins }}
+    enableServerPluginsAutoUpdate: {{ .Values.sillytavern.enableServerPluginsAutoUpdate }}

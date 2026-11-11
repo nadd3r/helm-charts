@@ -86,3 +86,14 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
   {{- end }}
 {{- end }}
+
+{{/*
+Return "true" if either basicAuthMode or enableUserAccounts is enabled.
+*/}}
+{{- define "sillytavern.secretNeeded" -}}
+  {{- $basicAuth := and .Values.sillytavern.basicAuthMode (not .Values.sillytavern.basicAuthUser.existingSecret.name) }}
+  {{- $defaultUser := and .Values.sillytavern.enableUserAccounts (not .Values.sillytavern.defaultUser.existingSecret.name)}}
+  {{- if or $basicAuth $defaultUser }}
+true
+  {{- end -}}
+{{- end }}

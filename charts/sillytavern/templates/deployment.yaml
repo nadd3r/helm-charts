@@ -5,77 +5,60 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "sillytavern.labels" . | nindent 4 }}
-{{- with .Values.deploymentAnnotations }}
+  {{- with .Values.deploymentAnnotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
-{{- end }}
+  {{- end }}
 spec:
-{{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-{{- end }}
-{{- with .Values.strategy }}
+  {{- with .Values.strategy }}
   strategy:
     {{- toYaml . | nindent 4 }}
-{{- end}}
+  {{- end}}
   selector:
     matchLabels:
       {{- include "sillytavern.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-{{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if (include "sillytavern.secretNeeded" .) }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
-{{- end }}
+      {{- end }}
       labels:
         {{- include "sillytavern.labels" . | nindent 8 }}
-{{- with .Values.podLabels }}
+      {{- with .Values.podLabels }}
         {{- tpl (toYaml .) $ | nindent 8 }}
-{{- end }}
+      {{- end }}
     spec:
-{{- with .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-{{- end }}
+      {{- end }}
       serviceAccountName: {{ include "sillytavern.serviceAccountName" . }}
-{{- with .Values.podSecurityContext }}
+      {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
-{{- end }}
-{{- with .Values.dnsPolicy }}
+      {{- end }}
+      {{- with .Values.dnsPolicy }}
       dnsPolicy: {{ tpl . $ | quote }}
-{{- end }}
-{{- with .Values.dnsConfig }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
       dnsConfig:
         {{- tpl (toYaml .) $ | nindent 8 }}
-{{- end }}
-{{- with .Values.resources }}
-      resources:
-        {{- tpl (toYaml .) $ | nindent 8 }}
-{{- end }}
+      {{- end }}
+      {{- if .Values.sillytavern.enableUserAccounts }}
       initContainers:
-        - name: generate-config
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          workingDir: /home/node/app
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              set -e
-              if [ ! -f config/config.yaml ]; then
-                cp default/config.yaml config/config.yaml
-              fi
-              npm run init
-              echo "config generated; exiting"
-          volumeMounts:
-            - name: sillytavern-data
-              mountPath: /home/node/app/config
-              subPath: config
-            - name: sillytavern-data
-              mountPath: /home/node/app/data
-              subPath: data
-{{- if .Values.config.enableUserAccounts }}
         - name: set-default-user-password
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          workingDir: /home/node/app
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -87,106 +70,107 @@ spec:
               # Official handle is default-user
               node recover.js default-user "$ST_DEFAULT_USER_PASSWORD"
           env:
-            - name: ST_DEFAULT_USER_PASSWORD
-  {{- if .Values.auth.adminUserPassword.existingSecret.name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.auth.adminUserPassword.existingSecret.name }}
-                  key: {{ .Values.auth.adminUserPassword.existingSecret.key }}
-  {{- end }}
-  {{- if not .Values.auth.adminUserPassword.existingSecret.name }}
-              value: {{ .Values.auth.adminUserPassword.password }}
-  {{- end }}
+          - name: ST_DEFAULT_USER_PASSWORD
+            {{- if .Values.sillytavern.defaultUser.existingSecret.name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sillytavern.defaultUser.existingSecret.name }}
+                key: {{ .Values.sillytavern.defaultUser.existingSecret.key }}
+            {{- else }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "sillytavern.fullname" . }}-secrets
+                key: DEFAULT_USER_PASSWORD
+            {{- end }}
           volumeMounts:
-            - name: sillytavern-data
-              mountPath: /home/node/app/config
-              subPath: config
-            - name: sillytavern-data
-              mountPath: /home/node/app/data
-              subPath: data
-{{- end }}
+            - mountPath: /home/node/app/config/config.yaml
+              name: {{ include "sillytavern.fullname" . }}-config
+              subPath: config.yaml
+            {{- if .Values.persistence.enabled }}
+            - mountPath: /home/node/app/data
+              name: {{ include "sillytavern.fullname" . }}-data
+            {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-{{- with .Values.securityContext }}
+          {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
-{{- end }}
+          {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-{{- with .Values.livenessProbe }}
+          {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
-{{- end }}
-{{- with .Values.readinessProbe }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
-{{- end }}
-{{- with .Values.resources }}
+          {{- end }}
+          {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
-{{- end }}
+          {{- end }}
+          {{- if (include "sillytavern.secretNeeded" .) }}
           envFrom:
-          - configMapRef:
-              name: {{ include "sillytavern.fullname" . }}-env
-{{- if and (not .Values.auth.basicAuthUser.existingSecret.name) .Values.config.basicAuthMode }}
           - secretRef:
-              name: {{ include "sillytavern.fullname" . }}-basicauth-secrets
-{{- end }}
-{{- if and .Values.auth.basicAuthUser.existingSecret.name .Values.config.basicAuthMode }}
-          env:
+              name: {{ include "sillytavern.fullname" . }}-secrets
+          {{- else if and .Values.sillytavern.basicAuthUser.existingSecret.name .Values.sillytavern.basicAuthMode }}
+          envFrom:
           - name: SILLYTAVERN_BASICAUTHUSER_USERNAME
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.auth.basicAuthUser.existingSecret.name }}
-                key: {{ .Values.auth.basicAuthUser.existingSecret.usernameKey }}
+                name: {{ .Values.sillytavern.basicAuthUser.existingSecret.name }}
+                key: {{ .Values.sillytavern.basicAuthUser.existingSecret.usernameKey }}
           - name: SILLYTAVERN_BASICAUTHUSER_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.auth.basicAuthUser.existingSecret.name }}
-                key: {{ .Values.auth.basicAuthUser.existingSecret.passwordKey }}
-{{- end }}
-          volumeMounts:
-          - mountPath: /home/node/app/config
-            name: sillytavern-data
-            subPath: config
-          - mountPath: /home/node/app/data
-            name: sillytavern-data
-            subPath: data
-          - mountPath: /home/node/app/plugins
-            name: sillytavern-data
-            subPath: plugins
-          - mountPath: /home/node/app/public/scripts/extensions/third-party
-            name: sillytavern-data
-            subPath: extensions
-{{- with .Values.additionalVolumeMounts }}
+                name: {{ .Values.sillytavern.basicAuthUser.existingSecret.name }}
+                key: {{ .Values.sillytavern.basicAuthUser.existingSecret.passwordKey }}
+          {{- end }}
+          {{- with .Values.extraEnv }}
+          env:
             {{- toYaml . | nindent 12 }}
-{{- end }}
+          {{- end }}
+          volumeMounts:
+          - mountPath: /home/node/app/config/config.yaml
+            name: {{ include "sillytavern.fullname" . }}-config
+            subPath: config.yaml
+          {{- if .Values.persistence.enabled }}
+          - mountPath: /home/node/app/data
+            name: {{ include "sillytavern.fullname" . }}-data
+          {{- end }}
+          {{- with .Values.additionalVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       volumes:
-{{- if .Values.persistence.enabled }}
-      - name: sillytavern-data
+      - name: {{ include "sillytavern.fullname" . }}-config
+        configMap:
+          name: {{ include "sillytavern.fullname" . }}-config
+      {{- if .Values.persistence.enabled }}
+      - name: {{ include "sillytavern.fullname" . }}-data
         persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim | default ( include "sillytavern.fullname" . ) }}
-{{- end }}
-{{- if not .Values.persistence.enabled}}
-      - name: sillytavern-data
+          claimName: {{ include "sillytavern.fullname" . }}-data
+      {{- else }}
+      - name: {{ include "sillytavern.fullname" . }}-data
         emptyDir: {}
-{{- end }}
-{{- with .Values.additionalVolumes }}
+      {{- end }}
+      {{- with .Values.additionalVolumes }}
         {{- toYaml . | nindent 8 }}
-{{- end }}
-{{- with .Values.nodeSelector }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
-{{- end }}
-{{- with .Values.affinity }}
+      {{- end }}
+      {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
-{{- end }}
-{{- with .Values.tolerations }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-{{- end }}
+      {{- end }}

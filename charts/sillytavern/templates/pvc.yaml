@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "sillytavern.fullname" . }}
+  name: {{ include "sillytavern.fullname" . }}-data
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "sillytavern.labels" . | nindent 4 }}

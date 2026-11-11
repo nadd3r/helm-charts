@@ -1,0 +1,27 @@
+{{- /* Ensure one of three values is set */ -}}
+{{- $whitelist := .Values.sillytavern.whitelistMode -}}
+{{- $basicAuth := .Values.sillytavern.basicAuthMode -}}
+{{- $defaultUser := .Values.sillytavern.enableUserAccounts -}}
+{{- $override := .Values.sillytavern.securityOverride }}
+
+{{- if not (or $whitelist $basicAuth $defaultUser $override) -}}
+{{- fail "You must enable at least one of basicAuthMode, enableUserAccounts, whitelistMode, or securityOverride." -}}
+{{- end }}
+
+{{- /* Basic Auth validation */ -}}
+{{- if $basicAuth }}
+  {{- if not .Values.sillytavern.basicAuthUser.existingSecret.name }}
+    {{- if or (empty .Values.sillytavern.basicAuthUser.username) (empty .Values.sillytavern.basicAuthUser.password) }}
+      {{- fail "basicAuthMode is enabled but username or password is missing. You must supply a username and password or use an existing secret." }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- /* Default user validation */ -}}
+{{- if $defaultUser }}
+  {{- if not .Values.sillytavern.defaultUser.existingSecret.name }}
+    {{- if empty .Values.sillytavern.defaultUser.password }}
+      {{- fail "enableUserAccounts is true but defaultUser.password is not set. You must supply a password or use an existing secret." }}
+    {{- end }}
+  {{- end }}
+{{- end }}
