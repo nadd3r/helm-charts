@@ -1,0 +1,43 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "github>home-operations/renovate-presets#8.1.0",
+    "github>home-operations/renovate-presets//apps/grafanaDashboards.json5#8.1.0",
+    "github>home-operations/renovate-presets//apps/talosFactory.json5#8.1.0",
+    ":timezone(America/New_York)",
+  ],
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["before 3am on the first day of the month"],
+    commitMessageExtra: "({{manager}})",
+    additionalBranchPrefix: "{{manager}}-",
+  },
+  packageRules: [
+    // Grouping rules
+    {
+      description: "Helm Charts Group",
+      groupName: "helm-charts",
+      matchDatasources: ["helm"],
+      matchPackageNames: ["*"],
+      group: {
+        commitMessageTopic: "{{{grouName}}} group",
+      },
+      minimumGroupSize: 1,
+    },
+    {
+      matchDatasources: ["helm"],
+      matchUpdateTypes: ["major"],
+      addLabels: ["type/major"],
+    },
+    {
+      matchDatasources: ["helm"],
+      matchUpdateTypes: ["minor"],
+      addLabels: ["type/minor"],
+    },
+    {
+      matchDatasources: ["helm"],
+      matchUpdateTypes: ["patch"],
+      addLabels: ["type/patch"],
+    },
+  ],
+}
