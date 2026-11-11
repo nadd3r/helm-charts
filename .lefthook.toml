@@ -19,11 +19,6 @@ glob = ["*.md", "*.markdown", "*.mdx"]
 run = "oxfmt {staged_files}"
 stage_fixed = true
 
-[pre-commit.commands.format-helm]
-glob = ["**/templates/**/*.{yaml,yml,tpl}"]
-run = "helmfmt --files {staged_files}"
-staged_fixed = true
-
 [pre-commit.commands.format-yaml]
 glob = ["*.yaml", "*.yml"]
 exclude = ["**/templates/**"]
