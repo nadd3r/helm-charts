@@ -88,98 +88,104 @@ data:
           {{- toYaml . | nindent 8 }}
         {{- end }}
 
-    sessionTimeout: -1
-    disableCsrfProtection: false
-    securityOverride: true
+    sessionTimeout: {{ .Values.sillytavern.sessionTimeout }}
+    disableCsrfProtection: {{ .Values.sillytavern.disableCsrfProtection }}
+    securityOverride: {{ .Values.sillytavern.seecurityOverride }}
     logging:
-      enableAccessLog: true
-      minLogLevel: 0
+      enableAccessLog: {{ .Values.sillytavern.logging.enableAccessLog }}
+      minLogLevel: {{ .Values.sillytavern.logging.minLogLevel }}
     rateLimiting:
-      preferRealIpHeader: false
-      basicAuthMaxAttempts: 5
-      accountsLoginMaxAttempts: 5
-      accountsRecoverMaxAttempts: 5
-      accountsResetMaxAttempts: 5
+      preferRealIpHeader: {{ .Values.sillytavern.rateLimiting.preferRealIpHeader }}
+      basicAuthMaxAttempts: {{ .Values.sillytavern.rateLimiting.basicAuthMaxAttempts }}
+      accountsLoginMaxAttempts: {{ .Values.sillytavern.rateLimiting.accountsLoginMaxAttempts }}
+      accountsRecoverMaxAttempts: {{ .Values.sillytavern.rateLimiting.accountsRecoverMaxAttempts }}
+      accountsResetMaxAttempts: {{ .Values.sillytavern.rateLimiting.accountsResetMaxAttempts }}
     forwardedHeaders:
-      xRealIp: true
-      xForwardedFor: true
-      cfConnectingIp: false
+      xRealIp: {{ .Values.sillytavern.forwardedHeaders.xRealIp }}
+      xForwardedFor: {{ .Values.sillytavern.forwardedHeaders.xForwardedFor }}
+      cfConnectingIp: {{ .Values.sillytavern.forwardedHeaders.cfConnectingIp }}
 
     backups:
-      allowFullDataBackup: true
+      allowFullDataBackup: {{ .Values.sillytavern.backups.allowFullDataBackup }}
       common:
-        numberOfBackups: 50
+        numberOfBackups: {{ .Values.sillytavern.backups.common.numberOfBackups }}
       chat:
-        enabled: true
-        checkIntegrity: true
-        maxTotalBackups: -1
-        throttleInterval: 10000
+        enabled: {{ .Values.sillytavern.backups.chat.enabled }}
+        checkIntegrity: {{ .Values.sillytavern.backups.chat.checkIntegrity }}
+        maxTotalBackups: {{ .Values.sillytavern.backups.chat.maxTotalBackups }}
+        throttleInterval: {{ .Values.sillytavern.backups.chat.throttleInterval }}
 
     thumbnails:
-      enabled: true
-      format: "jpg"
-      quality: 95
-      dimensions: { 'bg': [160, 90], 'avatar': [96, 144], 'persona': [96, 144] }
+      enabled: {{ .Values.sillytavern.thumbnails.enabled }}
+      format: {{ .Values.sillytavern.thumbnails.format | quote }}
+      quality: {{ .Values.sillytavern.thumbnails.quality }}
+      dimensions: { {{ .Values.sillytavern.thumbnails.dimensions }} } 
 
     performance:
-      lazyLoadCharacters: false
-      memoryCacheCapacity: '100mb'
-      useDiskCache: true
+      lazyLoadCharacters: {{ .Values.sillytavern.performance.lazyLoadCharacters }}
+      memoryCacheCapacity: {{ .Values.sillytavern.performance.memoryCacheCapacity | squote }}
+      useDiskCache: {{ .Values.sillytavern.performance.useDiskCache }}
       requestCompression:
-        enabled: false
-        minPayloadSize: '256kb'
-        maxPayloadSize: '8mb'
-        timeout: 4000
+        enabled: {{ .Values.sillytavern.performance.requestCompression.enabled }}
+        minPayloadSize: {{ .Values.sillytavern.performance.requestCompression.minPayloadSize | squote }}
+        maxPayloadSize: {{ .Values.sillytavern.performance.requestCompression.maxPayloadSize | squote }}
+        timeout: {{ .Values.sillytavern.performance.requestCompression.timeout }}
 
     cacheBuster:
-      enabled: false
-      userAgentPattern: ''
+      enabled: {{ .Values.sillytavern.cacheBuster.enabled }}
+      userAgentPattern: {{ .Values.sillytavern.cacheBuster.userAgentPattern | squote }}
 
-    allowKeysExposure: false
-    skipContentCheck: false
+    allowKeysExposure: {{ .Values.sillytavern.allowKeysExposure }}
+    skipContentCheck: {{ .Values.sillytavern.skipContentCheck }}
     whitelistImportDomains:
-      - localhost
-      - cdn.discordapp.com
-      - files.catbox.moe
-      - raw.githubusercontent.com
+      {{- with .Values.sillytavern.whitelistImportDomains }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- if .Values.sillytavern.requestOverrides }}
+    requestOverrides:
+      {{- with .Values.sillytavern.requestOverrides }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- else }}
     requestOverrides: []
+    {{- end }}
 
     extensions:
-      enabled: true
-      autoUpdate: true
+      enabled: {{ .Values.sillytavern.extensions.enabled }}
+      autoUpdate: {{ .Values.sillytavern.extensions.autoUpdate }}
       models:
-        autoDownload: true
-        classification: Cohee/distilbert-base-uncased-go-emotions-onnx
-        captioning: Xenova/vit-gpt2-image-captioning
-        embedding: Cohee/jina-embeddings-v2-base-en
-        speechToText: Xenova/whisper-small
-        textToSpeech: Xenova/speecht5_tts
+        autoDownload: {{ .Values.sillytavern.extensions.models.autoDownload }}
+        classification: {{ .Values.sillytavern.extensions.models.classification }}
+        captioning: {{ .Values.sillytavern.extensions.models.captioning }}
+        embedding: {{ .Values.sillytavern.extensions.models.embedding }}
+        speechToText: {{ .Values.sillytavern.extensions.models.speechToText }}
+        textToSpeech: {{ .Values.sillytavern.extensions.models.textToSpeech }}
 
     git:
-      backend: auto
+      backend: {{ .Values.sillytavern.git.backend }}
 
-    enableDownloadableTokenizers: true
-    promptPlaceholder: "[Start a new chat]"
+    enableDownloadableTokenizers: {{ .Values.sillytavern.enableDownloadableTokenizers }}
+    promptPlaceholder: {{ .Values.sillytavern.promptPlaceholder | quote }}
     openai:
-      randomizeUserId: false
-      captionSystemPrompt: ""
+      randomizeUserId: {{ .Values.sillytavern.openai.randomizeUserId }}
+      captionSystemPrompt: {{ .Values.sillytavern.openai.captionSystemPrompt | quote }}
     deepl:
-      formality: default
+      formality: {{ .Values.sillytavern.deepl.formality }}
     mistral:
-      enablePrefix: false
+      enablePrefix: {{ .Values.sillytavern.mistral.enablePrefix }}
     ollama:
-      keepAlive: -1
-      batchSize: -1
+      keepAlive: {{ .Values.sillytavern.ollama.keepAlive }}
+      batchSize: {{ .Values.sillytavern.ollama.batchSize }}
     claude:
-      enableSystemPromptCache: false
-      cachingAtDepth: -1
-      extendedTTL: false
-      enableAdaptiveThinking: false
+      enableSystemPromptCache: {{ .Values.sillytavern.claude.enableSystemPromptCache }}
+      cachingAtDepth: {{ .Values.sillytavern.claude.cachingAtDepth }}
+      extendedTTL: {{ .Values.sillytavern.claude.extendedTTL }}
+      enableAdaptiveThinking: {{ .Values.sillytavern.claude.enableAdaptiveThinking }}
     gemini:
-      apiVersion: 'v1beta'
-      thoughtSignatures: true
-      enableSystemPromptCache: false
+      apiVersion: {{ .Values.sillytavern.gemini.apiVersion | squote }}
+      thoughtSignatures: {{ .Values.sillytavern.gemini.thoughtSignatures }}
+      enableSystemPromptCache: {{ .Values.sillytavern.gemini.enableSystemPromptCache }}
       image:
-        personGeneration: 'allow_adult'
-    enableServerPlugins: false
-    enableServerPluginsAutoUpdate: true
+        personGeneration: {{ .Values.sillytavern.gemini.image.personGeneration }}
+    enableServerPlugins: {{ .Values.sillytavern.enableServerPlugins }}
+    enableServerPluginsAutoUpdate: {{ .Values.sillytavern.enableServerPluginsAutoUpdate }}

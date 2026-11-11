@@ -5,16 +5,16 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "sillytavern.labels" . | nindent 4 }}
-{{- with .Values.deploymentAnnotations }}
+  {{- with .Values.deploymentAnnotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
-{{- end }}
+  {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
-{{- with .Values.strategy }}
+  {{- with .Values.strategy }}
   strategy:
     {{- toYaml . | nindent 4 }}
-{{- end}}
+  {{- end}}
   selector:
     matchLabels:
       {{- include "sillytavern.selectorLabels" . | nindent 6 }}
@@ -22,6 +22,9 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if (include "sillytavern.secretNeeded" .) }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
       {{- with .Values.podAnnotations }}
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -31,50 +34,108 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
     spec:
-    {{- with .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
       serviceAccountName: {{ include "sillytavern.serviceAccountName" . }}
-    {{- with .Values.podSecurityContext }}
+      {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.dnsPolicy }}
+      {{- end }}
+      {{- with .Values.dnsPolicy }}
       dnsPolicy: {{ tpl . $ | quote }}
-    {{- end }}
-    {{- with .Values.dnsConfig }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
       dnsConfig:
         {{- tpl (toYaml .) $ | nindent 8 }}
-    {{- end }}
-    {{- with .Values.resources }}
-      resources:
-        {{- tpl (toYaml .) $ | nindent 8 }}
-    {{- end }}
-      containers:
-        - name: {{ .Chart.Name }}
-        {{- with .Values.securityContext }}
+      {{- end }}
+      {{- if .Values.sillytavern.enableUserAccounts }}
+      initContainers:
+        - name: set-default-user-password
+          {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
-        {{- end }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              if [ -z "$ST_DEFAULT_USER_PASSWORD" ]; then
+                echo "ST_DEFAULT_USER_PASSWORD is empty" >&2
+                exit 1
+              fi
+              # Official handle is default-user
+              node recover.js default-user "$ST_DEFAULT_USER_PASSWORD"
+          env:
+          - name: ST_DEFAULT_USER_PASSWORD
+            {{- if .Values.sillytavern.defaultUser.existingSecret.name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sillytavern.defaultUser.existingSecret.name }}
+                key: {{ .Values.sillytavern.defaultUser.existingSecret.key }}
+            {{- else }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "sillytavern.fullname" . }}-secrets
+                key: DEFAULT_USER_PASSWORD
+            {{- end }}
+          volumeMounts:
+            - mountPath: /home/node/app/config/config.yaml
+              name: {{ include "sillytavern.fullname" . }}-config
+              subPath: config.yaml
+            {{- if .Values.persistence.enabled }}
+            - mountPath: /home/node/app/data
+              name: {{ include "sillytavern.fullname" . }}-data
+            {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-        {{- with .Values.livenessProbe }}
+          {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
-        {{- end }}
-        {{- with .Values.readinessProbe }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
-        {{- end }}
-        {{- with .Values.resources }}
+          {{- end }}
+          {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
-        {{- end }}
+          {{- end }}
+          {{- if (include "sillytavern.secretNeeded" .) }}
+          envFrom:
+          - secretRef:
+              name: {{ include "sillytavern.fullname" . }}-secrets
+          {{- else if and .Values.sillytavern.basicAuthUser.existingSecret.name .Values.sillytavern.basicAuthMode }}
+          envFrom:
+          - name: SILLYTAVERN_BASICAUTHUSER_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sillytavern.basicAuthUser.existingSecret.name }}
+                key: {{ .Values.sillytavern.basicAuthUser.existingSecret.usernameKey }}
+          - name: SILLYTAVERN_BASICAUTHUSER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sillytavern.basicAuthUser.existingSecret.name }}
+                key: {{ .Values.sillytavern.basicAuthUser.existingSecret.passwordKey }}
+          {{- end }}
+          {{- with .Values.extraEnv }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
           - mountPath: /home/node/app/config/config.yaml
             name: {{ include "sillytavern.fullname" . }}-config
@@ -93,9 +154,8 @@ spec:
       {{- if .Values.persistence.enabled }}
       - name: {{ include "sillytavern.fullname" . }}-data
         persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim | default ( include "sillytavern.fullname" . ) }}
-      {{- end }}
-      {{- if not .Values.persistence.enabled}}
+          claimName: {{ include "sillytavern.fullname" . }}-data
+      {{- else }}
       - name: {{ include "sillytavern.fullname" . }}-data
         emptyDir: {}
       {{- end }}
